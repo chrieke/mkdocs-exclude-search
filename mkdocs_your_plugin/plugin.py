@@ -66,6 +66,9 @@ class ExcludeSearch(BasePlugin):
         return ""
 
     def on_page_markdown(self, markdown, page, config, site_nav):
+
+        # hello dolly example https://github.com/fmaida/hello-dolly-mkdocs-plugin
+        markdown = markdown.replace("{{dolly}}", random_lyrics())
         return markdown
 
     def on_page_content(self, html, page, config, site_nav):
