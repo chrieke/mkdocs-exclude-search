@@ -3,12 +3,24 @@ import sys
 from timeit import default_timer as timer
 from datetime import datetime, timedelta
 
+from .lyrics import random_lyrics
+
 from mkdocs import utils as mkdocs_utils
 from mkdocs.config import config_options, Config
 from mkdocs.plugins import BasePlugin
 
-class YourPlugin(BasePlugin):
+class ExcludeSearch(BasePlugin):
+    """
+    Excludes files from the search index.
 
+    https://github.com/mkdocs/mkdocs/issues/773
+
+    mkdocs/mkdocs/commands/build.py
+    Line 251
+    search_index.add_entry_from_context(
+
+    Check variable and remove.
+    """
     config_scheme = (
         ('param', config_options.Type(mkdocs_utils.string_types, default='')),
     )

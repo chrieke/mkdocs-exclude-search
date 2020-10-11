@@ -2,14 +2,14 @@ from setuptools import setup, find_packages
 
 
 setup(
-    name='mkdocs-your-plugin',
+    name='mkdocs-exclude-search',
     version='0.1.0',
-    description='A MkDocs plugin',
+    description='A Mkdocs plugin that lets you exclude files from the search index.',
     long_description='',
     keywords='mkdocs',
     url='',
-    author='Your Name',
-    author_email='your email',
+    author='Christoph Rieke',
+    author_email='christoph.k.rieke@gmail.com',
     license='MIT',
     python_requires='>=2.7',
     install_requires=[
