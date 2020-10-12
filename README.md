@@ -23,9 +23,19 @@ More information about plugins in the [MkDocs documentation][mkdocs-plugins].
 
 ```yaml
 plugins:
+  - search
   - exclude-search:
-    - files:
-      - cli.md
+      chapters:
+        - CLI
+```
+
+This would be for chapter `nav` settings in mkdocs.yml of e.g.
+
+```yaml
+nav:
+    - Home: index.md
+    - CLI: cli.md
+    - Other: other.md
 ```
 
 ## Usage
