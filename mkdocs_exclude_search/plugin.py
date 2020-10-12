@@ -32,14 +32,12 @@ class ExcludeSearch(BasePlugin):
     def on_post_build(self, config):
         if not "search" in config["plugins"]:
             logger.debug(
-                "mkdocs-exclude-search plugin is activated but has no effect as search plugin is deactivated!"
+                "mkdocs-exclude-search plugin is activated but has no effect as search "
+                "plugin is deactivated!"
             )
         else:
             exclude_files = self.config["files"]
             if exclude_files is not None:
-                # Remove suffix TODO: Make robust
-                exclude_files = [f.split(".")[0] for f in exclude_files]
-
                 search_index_fp = (
                     Path(config.data["site_dir"]) / "search/search_index.json"
                 )
@@ -48,7 +46,13 @@ class ExcludeSearch(BasePlugin):
 
                 included_records = []
                 for rec in search_index["docs"]:
-                    if rec["location"].split("/")[0] not in exclude_files:
+                    rec_file_name = (
+                        rec["location"].split("/")[0] + "/"
+                    )  # Ignore subchapters of excluded files
+                    if (
+                        rec["location"] not in exclude_files
+                        and not rec_file_name in exclude_files
+                    ):
                         included_records.append(rec)
 
                 search_index["docs"] = included_records
