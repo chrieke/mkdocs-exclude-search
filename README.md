@@ -23,8 +23,9 @@ More information about plugins in the [MkDocs documentation][mkdocs-plugins].
 
 ```yaml
 plugins:
-  - mkdocs-exclude-search:
-    - cli.md
+  - exclude-search:
+    - files:
+      - cli.md
 ```
 
 ## Usage

@@ -22,13 +22,14 @@ class ExcludeSearch(BasePlugin):
     Check variable and remove.
     """
     config_scheme = (
-        ('param', config_options.Type(mkdocs_utils.string_types, default='')),
+        ('files', config_options.Type((str, list), default=None)),
     )
 
     def __init__(self):
         self.enabled = True
         self.total_time = 0
 
+    # Global events
     def on_serve(self, server):
         return server
 
@@ -36,6 +37,13 @@ class ExcludeSearch(BasePlugin):
         return
 
     def on_files(self, files, config):
+        files = self.config['files'] or []
+        if not isinstance(files, list):
+            files = [files]
+
+
+
+
         return files
 
     def on_nav(self, nav, config, files):
@@ -50,6 +58,7 @@ class ExcludeSearch(BasePlugin):
     def on_post_build(self, config):
         return
 
+    # Template events
     def on_pre_template(self, template, template_name, config):
         return template
 
@@ -58,7 +67,8 @@ class ExcludeSearch(BasePlugin):
     
     def on_post_template(self, output_content, template_name, config):
         return output_content
-    
+
+    # Page events
     def on_pre_page(self, page, config, site_nav):
         return page
 

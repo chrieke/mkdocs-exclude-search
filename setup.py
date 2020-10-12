@@ -30,7 +30,7 @@ setup(
     packages=find_packages(),
     entry_points={
         'mkdocs.plugins': [
-            'your-plugin = mkdocs_your_plugin.plugin:YourPlugin'
+            'exclude-search = mkdocs_exclude_search:ExcludeSearch'
         ]
     }
 )
