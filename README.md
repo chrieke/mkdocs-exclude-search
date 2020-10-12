@@ -1,6 +1,6 @@
 # mkdocs-exclude-search
 
-A mkdocs plugin that lets you exclude selected files or header sections from the search index.
+A mkdocs plugin that lets you exclude selected files or sections from the search index.
 
 ## Setup
 
@@ -22,7 +22,7 @@ More information about plugins in the [MkDocs documentation][mkdocs-plugins].
 ## Config
 
 List the files to be excluded from the search as they appear in the `mkdocs.yml` nav 
-section. You can also only exclude specific heading subsections.
+section. You can also exclude just specific heading subsections.
 
 ```yaml
 plugins:
@@ -41,9 +41,8 @@ nav:
     - Third chapter: third.md
 ```
 
-This example would display all three chapters, but would exclude from the search, the 
-second chapter completely and the `some-heading` header subsection of the third chapter 
-from.
+This example would exclude from the search the second chapter and the `some-heading` 
+header subsection of the third chapter.
 
 
 ## See Also
