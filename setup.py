@@ -4,6 +4,7 @@ from setuptools import setup, find_packages
 setup(
     name='mkdocs-exclude-search',
     version='0.1.0',
+    packages=['mkdocs_exclude_search'],
     description='A Mkdocs plugin that lets you exclude files from the search index.',
     long_description='',
     keywords='mkdocs',
@@ -27,7 +28,6 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7'
     ],
-    packages=find_packages(),
     entry_points={
         'mkdocs.plugins': [
             'exclude-search = mkdocs_exclude_search:ExcludeSearch'

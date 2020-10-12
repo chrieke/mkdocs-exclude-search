@@ -1,1 +1,1 @@
-from .excludesearch import ExcludeSearch
+from .plugin import ExcludeSearch
