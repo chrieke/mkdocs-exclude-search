@@ -5,7 +5,7 @@ setup(
     name="mkdocs-exclude-search",
     version="0.1.0",
     description="A mkdocs plugin that lets you exclude selected files or sections "
-                "from the search index.",
+    "from the search index.",
     long_description="",
     keywords="mkdocs",
     url="",

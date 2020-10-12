@@ -38,6 +38,8 @@ class ExcludeSearch(BasePlugin):
         else:
             exclude_files = self.config["files"]
             if exclude_files is not None:
+                # TODO: Other suffixes ipynb etc., more robust
+                exclude_files = [f.replace(".md", "") for f in exclude_files]
                 search_index_fp = (
                     Path(config.data["site_dir"]) / "search/search_index.json"
                 )
@@ -46,14 +48,17 @@ class ExcludeSearch(BasePlugin):
 
                 included_records = []
                 for rec in search_index["docs"]:
-                    rec_file_name = (
-                        rec["location"].split("/")[0] + "/"
-                    )  # Ignore subchapters of excluded files
-                    if (
-                        rec["location"] not in exclude_files
-                        and not rec_file_name in exclude_files
-                    ):
+                    if rec["location"] == "" or rec["location"].startswith("#"):
                         included_records.append(rec)
+                    else:
+                        rec_main_name, rec_subchapter = rec["location"].split("/")[-2:]
+
+                        if (
+                            rec_main_name + rec_subchapter not in exclude_files
+                            and not rec_main_name in exclude_files # Also ignore subchapters of excluded main files
+                        ):
+                            print(rec["location"])
+                            included_records.append(rec)
 
                 search_index["docs"] = included_records
                 with open(search_index_fp, "w") as f:
