@@ -28,9 +28,11 @@ section. You can also exclude just specific heading subsections.
 plugins:
   - search
   - exclude-search:
-      files:
+      exclude:
         - second.md
         - third.md#some-heading
+      ignore:
+        - second.md#another-heading
 
 ```
 ```yaml
