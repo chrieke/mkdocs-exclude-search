@@ -53,7 +53,7 @@ class ExcludeSearch(BasePlugin):
                         if not ignore_entry.endswith(".md"):
                             ignore_entry_main_name = ignore_entry.split("#")[0]
                             also_ignore.append(ignore_entry_main_name)
-                    to_ignore+=also_ignore
+                    to_ignore += also_ignore
 
                 search_index_fp = (
                     Path(config.data["site_dir"]) / "search/search_index.json"
@@ -73,7 +73,8 @@ class ExcludeSearch(BasePlugin):
                             included_records.append(rec)
                         elif (
                             rec_main_name not in to_exclude
-                            and rec_main_name + rec_subchapter not in to_exclude # Also ignore subchapters of excluded main records
+                            and rec_main_name + rec_subchapter
+                            not in to_exclude  # Also ignore subchapters of excluded main records
                         ):
                             print("included", rec["location"])
                             included_records.append(rec)
