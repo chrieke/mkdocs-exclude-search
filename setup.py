@@ -1,14 +1,17 @@
 from setuptools import setup, find_packages
 
+with open("README.md", "r") as fh:
+    LONG_DESCRIPTION = fh.read()
 
 setup(
     name="mkdocs-exclude-search",
     version="0.1.0",
     description="A mkdocs plugin that lets you exclude selected files or sections "
     "from the search index.",
-    long_description="",
+    long_description=LONG_DESCRIPTION,
+    long_description_content_type="text/markdown",
     keywords="mkdocs",
-    url="",
+    url="https://github.com/chrieke/mkdocs-exclude-search",
     author="Christoph Rieke",
     author_email="christoph.k.rieke@gmail.com",
     license="MIT",
