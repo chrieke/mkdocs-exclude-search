@@ -21,8 +21,11 @@ More information about plugins in the [MkDocs documentation][mkdocs-plugins].
 
 ## Config
 
-List the files to be excluded from the search as they appear in the `mkdocs.yml` nav 
-section. You can also exclude just specific heading subsections.
+List the markdown files to be excluded under `exclude` using the format `filename.md`. 
+Exclude specific heading subsections using the format `filename.md#some-heading`.
+
+To only include a specific heading subsection of an excluded file, list the subsection
+under `ignore`.
 
 ```yaml
 plugins:
