@@ -47,6 +47,13 @@ class ExcludeSearch(BasePlugin):
                 to_exclude = [f.replace(".md", "") for f in to_exclude]
                 if to_ignore is not None:
                     to_ignore = [f.replace(".md", "") for f in to_ignore]
+                    # subchapters require both the subchapter as well as the main record.
+                    also_ignore = []
+                    for ignore_entry in to_ignore:
+                        if not ignore_entry.endswith(".md"):
+                            ignore_entry_main_name = ignore_entry.split("#")[0]
+                            also_ignore.append(ignore_entry_main_name)
+                    to_ignore+=also_ignore
 
                 search_index_fp = (
                     Path(config.data["site_dir"]) / "search/search_index.json"
@@ -62,11 +69,12 @@ class ExcludeSearch(BasePlugin):
                         rec_main_name, rec_subchapter = rec["location"].split("/")[-2:]
 
                         if rec_main_name + rec_subchapter in to_ignore:
-                            included_records.append(rec)
                             print("ignored", rec["location"])
-                        elif (rec_main_name not in to_exclude) and (
-                            rec_main_name + rec_subchapter not in to_exclude
-                        ):  # Also ignore subchapters of excluded main files
+                            included_records.append(rec)
+                        elif (
+                            rec_main_name not in to_exclude
+                            and rec_main_name + rec_subchapter not in to_exclude # Also ignore subchapters of excluded main records
+                        ):
                             print("included", rec["location"])
                             included_records.append(rec)
 
