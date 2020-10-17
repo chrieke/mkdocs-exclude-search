@@ -46,8 +46,8 @@ nav:
     - Third chapter: third.md
 ```
 
-This example would exclude from the search the second chapter and the `some-heading` 
-header subsection of the third chapter.
+This example would exclude the second chapter (but still include its 
+`another-heading` subsection) and exclude the `some-heading` subsection of the third chapter.
 
 
 ## See Also
