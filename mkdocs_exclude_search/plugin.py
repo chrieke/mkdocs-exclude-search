@@ -25,8 +25,8 @@ class ExcludeSearch(BasePlugin):
     """
 
     config_scheme = (
-        ("exclude", config_options.Type((str, list), default=None)),
-        ("ignore", config_options.Type((str, list), default=None)),
+        ("exclude", config_options.Type((str, list), default=[])),
+        ("ignore", config_options.Type((str, list), default=[])),
     )
 
     def __init__(self):
@@ -42,10 +42,10 @@ class ExcludeSearch(BasePlugin):
         else:
             to_exclude = self.config["exclude"]
             to_ignore = self.config["ignore"]
-            if to_exclude is not None:
+            if to_exclude:
                 # TODO: Other suffixes ipynb etc., more robust
                 to_exclude = [f.replace(".md", "") for f in to_exclude]
-                if to_ignore is not None:
+                if to_ignore:
                     to_ignore = [f.replace(".md", "") for f in to_ignore]
                     # subchapters require both the subchapter as well as the main record.
                     also_ignore = []
@@ -69,6 +69,7 @@ class ExcludeSearch(BasePlugin):
                         rec_main_name, rec_subchapter = rec["location"].split("/")[-2:]
 
                         if rec_main_name + rec_subchapter in to_ignore:
+                            print(rec)
                             print("ignored", rec["location"])
                             included_records.append(rec)
                         elif (
