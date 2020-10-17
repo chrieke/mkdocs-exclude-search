@@ -69,16 +69,17 @@ class ExcludeSearch(BasePlugin):
                         rec_main_name, rec_subchapter = rec["location"].split("/")[-2:]
 
                         if rec_main_name + rec_subchapter in to_ignore:
-                            print(rec)
-                            print("ignored", rec["location"])
+                            # print("ignored", rec["location"])
                             included_records.append(rec)
                         elif (
                             rec_main_name not in to_exclude
                             and rec_main_name + rec_subchapter
                             not in to_exclude  # Also ignore subchapters of excluded main records
                         ):
-                            print("included", rec["location"])
+                            # print("included", rec["location"])
                             included_records.append(rec)
+                        else:
+                            logger.info(f"exclude-search: {rec['location']}")
 
                 search_index["docs"] = included_records
                 with open(search_index_fp, "w") as f:
