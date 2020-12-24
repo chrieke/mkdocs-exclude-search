@@ -47,7 +47,7 @@ class ExcludeSearch(BasePlugin):
                 # Replace stars with dirpath
                 for idx, x in enumerate(to_exclude):
                     if "*" in x:
-                        to_exclude[idx] = ''.join(x.split("/")[:-1])
+                        to_exclude[idx] = "".join(x.split("/")[:-1])
                         # TODO: This currently could exclude files with an excluded folder of the same name.
 
                 if to_ignore:
@@ -73,7 +73,7 @@ class ExcludeSearch(BasePlugin):
                         included_records.append(rec)
                     else:
                         if len(rec["location"].split("/")) > 2:
-                            rec_dir = ''.join(rec["location"].split("/")[:-2])
+                            rec_dir = "".join(rec["location"].split("/")[:-2])
                         else:
                             rec_dir = None
                         rec_main_name, rec_subchapter = rec["location"].split("/")[-2:]
