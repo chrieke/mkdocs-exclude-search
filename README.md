@@ -24,8 +24,7 @@ More information about plugins in the [MkDocs documentation][mkdocs-plugins].
 - List the markdown files to be excluded under `exclude` using the format `filename.md`. 
 - Exclude specific heading subsections using the format `filename.md#some-heading`.
 - Exclude all markdown files within a specific directory with `directory_name/*.md`.
-
-To only include a specific heading subsection of an excluded file, list the subsection
+- To only include a specific heading subsection of an excluded file, list the subsection
 under `ignore`.
 
 ```yaml
