@@ -21,8 +21,9 @@ More information about plugins in the [MkDocs documentation][mkdocs-plugins].
 
 ## Config
 
-List the markdown files to be excluded under `exclude` using the format `filename.md`. 
-Exclude specific heading subsections using the format `filename.md#some-heading`.
+- List the markdown files to be excluded under `exclude` using the format `filename.md`. 
+- Exclude specific heading subsections using the format `filename.md#some-heading`.
+- Exclude all markdown files within a specific directory with `directory_name/*.md`.
 
 To only include a specific heading subsection of an excluded file, list the subsection
 under `ignore`.
@@ -34,6 +35,7 @@ plugins:
       exclude:
         - second.md
         - third.md#some-heading
+        - some_directory/*.md
       ignore:
         - second.md#another-heading
 
@@ -44,10 +46,14 @@ nav:
     - First chapter: first.md
     - Second chapter: second.md
     - Third chapter: third.md
+    - Fourth chapter: some_directory/fourth.md
 ```
 
-This example would exclude the second chapter (but still include its 
-`another-heading` subsection) and exclude the `some-heading` subsection of the third chapter.
+This example would exclude:
+- the second chapter (but still include its `another-heading` subsection) 
+- the `some-heading` subsection of the third chapter.
+- all markdown files within `some_directory`.
+
 
 
 ## See Also
