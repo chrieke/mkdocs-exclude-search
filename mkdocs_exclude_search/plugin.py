@@ -43,10 +43,15 @@ class ExcludeSearch(BasePlugin):
             to_exclude = self.config["exclude"]
             to_ignore = self.config["ignore"]
             if to_exclude:
-                # TODO: Other suffixes ipynb etc., more robust
-                to_exclude = [f.replace(".md", "") for f in to_exclude]
+                to_exclude = [f.replace(".md", "") for f in to_exclude if ".md" in f]
+                # Replace stars with dirpath
+                for idx, x in enumerate(to_exclude):
+                    if "*" in x:
+                        to_exclude[idx] = ''.join(x.split("/")[:-1])
+                        # TODO: This currently could exclude files with an excluded folder of the same name.
+
                 if to_ignore:
-                    to_ignore = [f.replace(".md", "") for f in to_ignore]
+                    to_ignore = [f.replace(".md", "") for f in to_ignore if ".md" in f]
                     # subchapters require both the subchapter as well as the main record.
                     also_ignore = []
                     for ignore_entry in to_ignore:
@@ -64,15 +69,21 @@ class ExcludeSearch(BasePlugin):
                 included_records = []
                 for rec in search_index["docs"]:
                     if rec["location"] == "" or rec["location"].startswith("#"):
+                        # index and other neccessary files.
                         included_records.append(rec)
                     else:
+                        if len(rec["location"].split("/")) > 2:
+                            rec_dir = ''.join(rec["location"].split("/")[:-2])
+                        else:
+                            rec_dir = None
                         rec_main_name, rec_subchapter = rec["location"].split("/")[-2:]
 
                         if rec_main_name + rec_subchapter in to_ignore:
                             # print("ignored", rec["location"])
                             included_records.append(rec)
                         elif (
-                            rec_main_name not in to_exclude
+                            rec_dir not in to_exclude
+                            and rec_main_name not in to_exclude
                             and rec_main_name + rec_subchapter
                             not in to_exclude  # Also ignore subchapters of excluded main records
                         ):
