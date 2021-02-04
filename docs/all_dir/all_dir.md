@@ -1,16 +1,16 @@
-# alldir Header Aex
+# alldir Header all_dir Aex
 
 
-## alldir header AAex
+## alldir header all_dir AAex
 
-alldir text AAex
-
-
-## alldir header BBex
-
-alldir text BBex
+alldir text all_dir AAex
 
 
-## alldir header CCex
+## alldir header all_dir BBex
 
-alldir text CCex
+alldir text all_dir BBex
+
+
+## alldir header all_dir CCex
+
+alldir text all_dir CCex
