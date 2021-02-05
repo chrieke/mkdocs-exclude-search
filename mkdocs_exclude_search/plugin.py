@@ -68,7 +68,7 @@ class ExcludeSearch(BasePlugin):
 
                 included_records = []
                 for rec in search_index["docs"]:
-                    if rec["location"] == "" or rec["location"].startswith("#"):
+                    if "/" not in rec["location"]:
                         # index and other neccessary files.
                         included_records.append(rec)
                     else:
