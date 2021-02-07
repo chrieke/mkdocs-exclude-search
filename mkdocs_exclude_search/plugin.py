@@ -27,6 +27,7 @@ class ExcludeSearch(BasePlugin):
     config_scheme = (
         ("exclude", config_options.Type((str, list), default=[])),
         ("ignore", config_options.Type((str, list), default=[])),
+        ("exclude_tags", config_options.Type(bool, default=False)),
     )
 
     def __init__(self):
@@ -39,61 +40,72 @@ class ExcludeSearch(BasePlugin):
                 "mkdocs-exclude-search plugin is activated but has no effect as search "
                 "plugin is deactivated!"
             )
-        else:
-            to_exclude = self.config["exclude"]
-            to_ignore = self.config["ignore"]
-            if to_exclude:
-                to_exclude = [f.replace(".md", "") for f in to_exclude if ".md" in f]
-                # Replace stars with dirpath
-                for idx, x in enumerate(to_exclude):
-                    if "*" in x:
-                        to_exclude[idx] = "".join(x.split("/")[:-1])
-                        # TODO: This currently could exclude files with an excluded folder of the same name.
+            return config
 
-                if to_ignore:
-                    to_ignore = [f.replace(".md", "") for f in to_ignore if ".md" in f]
-                    # subchapters require both the subchapter as well as the main record.
-                    also_ignore = []
-                    for ignore_entry in to_ignore:
-                        if not ignore_entry.endswith(".md"):
-                            ignore_entry_main_name = ignore_entry.split("#")[0]
-                            also_ignore.append(ignore_entry_main_name)
-                    to_ignore += also_ignore
+        to_exclude = self.config["exclude"]
+        to_ignore = self.config["ignore"]
+        exclude_tags = self.config["exclude_tags"]
 
-                search_index_fp = (
-                    Path(config.data["site_dir"]) / "search/search_index.json"
-                )
-                with open(search_index_fp, "r") as f:
-                    search_index = json.load(f)
+        if not to_exclude or not exclude_tags:
+            logger.info(
+                f"To exclude search entries please add any files to the mkdocs-exclude-search plugin configuration."
+            )
+            return config
 
-                included_records = []
-                for rec in search_index["docs"]:
-                    if "/" not in rec["location"]:
-                        # index and other neccessary files.
-                        included_records.append(rec)
-                    else:
-                        if len(rec["location"].split("/")) > 2:
-                            rec_dir = "".join(rec["location"].split("/")[:-2])
-                        else:
-                            rec_dir = None
-                        rec_main_name, rec_subchapter = rec["location"].split("/")[-2:]
+        # Find files to ignore from ignore user config.
+        if to_ignore:
+            to_ignore = [f.replace(".md", "") for f in to_ignore if ".md" in f]
+            # subchapters require both the subchapter as well as the main record.
+            also_ignore = []
+            for ignore_entry in to_ignore:
+                if not ignore_entry.endswith(".md"):
+                    ignore_entry_main_name = ignore_entry.split("#")[0]
+                    also_ignore.append(ignore_entry_main_name)
+            to_ignore += also_ignore
 
-                        if rec_main_name + rec_subchapter in to_ignore:
-                            # print("ignored", rec["location"])
-                            included_records.append(rec)
-                        elif (
-                            rec_dir not in to_exclude
-                            and rec_main_name not in to_exclude
-                            and rec_main_name + rec_subchapter
-                            not in to_exclude  # Also ignore subchapters of excluded main records
-                        ):
-                            # print("included", rec["location"])
-                            included_records.append(rec)
-                        else:
-                            logger.info(f"exclude-search: {rec['location']}")
+        # Find filenames of directory exclusions via "*"
+        to_exclude = [f.replace(".md", "") for f in to_exclude if ".md" in f]
+        # TODO: This currently could exclude files with an excluded folder of the same name.
+        for idx, entry in enumerate(to_exclude):
+            if "*" in entry:
+                to_exclude[idx] = "".join(entry.split("/")[:-1])
 
-                search_index["docs"] = included_records
-                with open(search_index_fp, "w") as f:
-                    json.dump(search_index, f)
+        search_index_fp = Path(config.data["site_dir"]) / "search/search_index.json"
+        with open(search_index_fp, "r") as f:
+            search_index = json.load(f)
+
+        included_records = []
+        for rec in search_index["docs"]:
+            if "/" not in rec["location"]:
+                if "tags.html" in rec["location"] and exclude_tags:
+                    # Ignore entries of mkdocs-plugin-tags
+                    # TODO: Surface in readme
+                    continue
+                # index and other neccessary files.
+                included_records.append(rec)
+            else:
+                if len(rec["location"].split("/")) > 2:
+                    rec_dir = "".join(rec["location"].split("/")[:-2])
+                else:
+                    rec_dir = None
+                rec_main_name, rec_subchapter = rec["location"].split("/")[-2:]
+
+                if rec_main_name + rec_subchapter in to_ignore:
+                    # print("ignored", rec["location"])
+                    included_records.append(rec)
+                elif (
+                    rec_dir not in to_exclude
+                    and rec_main_name not in to_exclude
+                    and rec_main_name + rec_subchapter
+                    not in to_exclude  # Also ignore subchapters of excluded main records
+                ):
+                    # print("included", rec["location"])
+                    included_records.append(rec)
+                else:
+                    logger.info(f"exclude-search: {rec['location']}")
+
+        search_index["docs"] = included_records
+        with open(search_index_fp, "w") as f:
+            json.dump(search_index, f)
 
         return config
