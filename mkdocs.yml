@@ -16,6 +16,7 @@ theme:
 
 plugins:
   - search
+  - tags
   - exclude-search:
       exclude:
         - chapter_exclude_all.md
