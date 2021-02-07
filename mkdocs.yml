@@ -25,8 +25,7 @@ plugins:
         - dir_chapter_ignore_heading3.md
         - all_dir/*.md
         - all_dir_sub/all_dir_sub2/*.md
-        - generated/tags.md
-        - tags.md
       ignore:
         - dir_chapter_ignore_heading3.md#dir-single-header-dir_chapter_ignore_heading3-ccin
         - all_dir_ignore_heading1.md#alldir-header-all_dir_ignore_heading1-aain
+      exclude_tags: True
