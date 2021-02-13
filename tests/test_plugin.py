@@ -143,3 +143,22 @@ def test_select_records():
     )
     assert isinstance(included_records, list)
     assert included_records == INCLUDED_RECORDS
+
+
+def test_select_records_exclude_tags():
+    _location_ = Path(__file__).resolve().parent
+    with open(_location_.joinpath("mock_data/mock_search_index.json"), "r") as f:
+        mock_search_index = json.load(f)
+
+    included_records = ExcludeSearch.select_included_records(
+        search_index=mock_search_index,
+        to_exclude=RESOLVED_EXCLUDED_RECORDS,
+        to_ignore=RESOLVED_IGNORED_CHAPTERS,
+        exclude_tags=True,
+    )
+
+    included_records_without_tags = [
+        rec for rec in INCLUDED_RECORDS if not "tags.html" in rec["location"]
+    ]
+    assert isinstance(included_records_without_tags, list)
+    assert included_records == included_records_without_tags
