@@ -28,3 +28,4 @@ plugins:
       ignore:
         - dir_chapter_ignore_heading3.md#dir-single-header-dir_chapter_ignore_heading3-ccin
         - all_dir_ignore_heading1.md#alldir-header-all_dir_ignore_heading1-aain
+      #exclude_tags: True   # Default False, only relevant for excluding tags of mkdocs-plugin-tags
