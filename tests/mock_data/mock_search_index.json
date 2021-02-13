@@ -1,0 +1,182 @@
+{
+  "config": {
+    "lang": [
+      "en"
+    ],
+    "min_search_length": 3,
+    "prebuild_index": false,
+    "separator": "[\\s\\-]+"
+  },
+  "docs": [
+    {
+      "location": "",
+      "text": "Index Hello, hello",
+      "title": "index"
+    },
+    {
+      "location": "#index",
+      "text": "Hello, hello",
+      "title": "Index"
+    },
+    {
+      "location": "chapter_exclude_all/",
+      "text": "Header chapter_exclude_all Aex header chapter_exclude_all AAex text chapter_exclude_all AAex header chapter_exclude_all BBex text chapter_exclude_all BBex",
+      "title": "chapter_exclude_all"
+    },
+    {
+      "location": "chapter_exclude_all/#header-chapter_exclude_all-aex",
+      "text": "",
+      "title": "Header chapter_exclude_all Aex"
+    },
+    {
+      "location": "chapter_exclude_all/#header-chapter_exclude_all-aaex",
+      "text": "text chapter_exclude_all AAex",
+      "title": "header chapter_exclude_all AAex"
+    },
+    {
+      "location": "chapter_exclude_all/#header-chapter_exclude_all-bbex",
+      "text": "text chapter_exclude_all BBex",
+      "title": "header chapter_exclude_all BBex"
+    },
+    {
+      "location": "chapter_exclude_heading2/",
+      "text": "single chapter_exclude_heading2 Header Ain single header chapter_exclude_heading2 AAin single text chapter_exclude_heading2 AAin single header chapter_exclude_heading2 BBex single text chapter_exclude_heading2 BBex",
+      "title": "chapter_exclude_heading2"
+    },
+    {
+      "location": "chapter_exclude_heading2/#single-chapter_exclude_heading2-header-ain",
+      "text": "",
+      "title": "single chapter_exclude_heading2 Header Ain"
+    },
+    {
+      "location": "chapter_exclude_heading2/#single-header-chapter_exclude_heading2-aain",
+      "text": "single text chapter_exclude_heading2 AAin",
+      "title": "single header chapter_exclude_heading2 AAin"
+    },
+    {
+      "location": "chapter_exclude_heading2/#single-header-chapter_exclude_heading2-bbex",
+      "text": "single text chapter_exclude_heading2 BBex",
+      "title": "single header chapter_exclude_heading2 BBex"
+    },
+    {
+      "location": "all_dir/all_dir/",
+      "text": "alldir Header all_dir Aex alldir header all_dir AAex alldir text all_dir AAex alldir header all_dir BBex alldir text all_dir BBex",
+      "title": "all_dir"
+    },
+    {
+      "location": "all_dir/all_dir/#alldir-header-all_dir-aex",
+      "text": "",
+      "title": "alldir Header all_dir Aex"
+    },
+    {
+      "location": "all_dir/all_dir/#alldir-header-all_dir-aaex",
+      "text": "alldir text all_dir AAex",
+      "title": "alldir header all_dir AAex"
+    },
+    {
+      "location": "all_dir/all_dir/#alldir-header-all_dir-bbex",
+      "text": "alldir text all_dir BBex",
+      "title": "alldir header all_dir BBex"
+    },
+    {
+      "location": "all_dir/all_dir_ignore_heading1/",
+      "text": "alldir Header all_dir_ignore_heading1 Aex alldir header all_dir_ignore_heading1 AAin alldir text all_dir_ignore_heading1 AAin alldir header all_dir_ignore_heading1 BBex alldir text all_dir_ignore_heading1 BBex",
+      "title": "all_dir_ignore_heading1"
+    },
+    {
+      "location": "all_dir/all_dir_ignore_heading1/#alldir-header-all_dir_ignore_heading1-aex",
+      "text": "",
+      "title": "alldir Header all_dir_ignore_heading1 Aex"
+    },
+    {
+      "location": "all_dir/all_dir_ignore_heading1/#alldir-header-all_dir_ignore_heading1-aain",
+      "text": "alldir text all_dir_ignore_heading1 AAin",
+      "title": "alldir header all_dir_ignore_heading1 AAin"
+    },
+    {
+      "location": "all_dir/all_dir_ignore_heading1/#alldir-header-all_dir_ignore_heading1-bbex",
+      "text": "alldir text all_dir_ignore_heading1 BBex",
+      "title": "alldir header all_dir_ignore_heading1 BBex"
+    },
+    {
+      "location": "all_dir_sub/all_dir_sub2/all_dir_sub2_1/",
+      "text": "alldir Header all_dir_sub2 Aex alldir header all_dir_sub2 AAex alldir text all_dir_sub2 AAex alldir header all_dir_sub2 BBex alldir text all_dir_sub2 BBex",
+      "title": "all_dir_sub2"
+    },
+    {
+      "location": "all_dir_sub/all_dir_sub2/all_dir_sub2_1/#alldir-header-all_dir_sub2-aex",
+      "text": "",
+      "title": "alldir Header all_dir_sub2 Aex"
+    },
+    {
+      "location": "all_dir_sub/all_dir_sub2/all_dir_sub2_1/#alldir-header-all_dir_sub2-aaex",
+      "text": "alldir text all_dir_sub2 AAex",
+      "title": "alldir header all_dir_sub2 AAex"
+    },
+    {
+      "location": "all_dir_sub/all_dir_sub2/all_dir_sub2_1/#alldir-header-all_dir_sub2-bbex",
+      "text": "alldir text all_dir_sub2 BBex",
+      "title": "alldir header all_dir_sub2 BBex"
+    },
+    {
+      "location": "dir/dir_chapter_exclude_all/",
+      "text": "dir Header dir_chapter_exclude_all Aex dir header dir_chapter_exclude_all AAex dir text dir_chapter_exclude_all AAex dir header dir_chapter_exclude_all BBex dir text dir_chapter_exclude_all BBex",
+      "title": "dir_chapter_exclude_all"
+    },
+    {
+      "location": "dir/dir_chapter_exclude_all/#dir-header-dir_chapter_exclude_all-aex",
+      "text": "",
+      "title": "dir Header dir_chapter_exclude_all Aex"
+    },
+    {
+      "location": "dir/dir_chapter_exclude_all/#dir-header-dir_chapter_exclude_all-aaex",
+      "text": "dir text dir_chapter_exclude_all AAex",
+      "title": "dir header dir_chapter_exclude_all AAex"
+    },
+    {
+      "location": "dir/dir_chapter_exclude_all/#dir-header-dir_chapter_exclude_all-bbex",
+      "text": "dir text dir_chapter_exclude_all BBex",
+      "title": "dir header dir_chapter_exclude_all BBex"
+    },
+    {
+      "location": "dir/dir_chapter_ignore_heading3/",
+      "text": "dir single Header dir_chapter_ignore_heading3 Aex dir single header dir_chapter_ignore_heading3 AAex dir single text dir_chapter_ignore_heading3 AAex dir single header dir_chapter_ignore_heading3 CCin dir single text dir_chapter_ignore_heading3 CCin",
+      "title": "dir_chapter_ignore_heading3"
+    },
+    {
+      "location": "dir/dir_chapter_ignore_heading3/#dir-single-header-dir_chapter_ignore_heading3-aex",
+      "text": "",
+      "title": "dir single Header dir_chapter_ignore_heading3 Aex"
+    },
+    {
+      "location": "dir/dir_chapter_ignore_heading3/#dir-single-header-dir_chapter_ignore_heading3-aaex",
+      "text": "dir single text dir_chapter_ignore_heading3 AAex",
+      "title": "dir single header dir_chapter_ignore_heading3 AAex"
+    },
+    {
+      "location": "dir/dir_chapter_ignore_heading3/#dir-single-header-dir_chapter_ignore_heading3-ccin",
+      "text": "dir single text dir_chapter_ignore_heading3 CCin",
+      "title": "dir single header dir_chapter_ignore_heading3 CCin"
+    },
+    {
+      "location": "tags.html",
+      "text": "Contents grouped by tag testing Welcome unimportant Welcome",
+      "title": "Tags"
+    },
+    {
+      "location": "tags.html#contents-grouped-by-tag",
+      "text": "",
+      "title": "Contents grouped by tag"
+    },
+    {
+      "location": "tags.html#testing",
+      "text": "Welcome",
+      "title": "testing"
+    },
+    {
+      "location": "tags.html#unimportant",
+      "text": "Welcome",
+      "title": "unimportant"
+    }
+  ]
+}
