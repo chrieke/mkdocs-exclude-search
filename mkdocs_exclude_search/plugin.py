@@ -46,7 +46,7 @@ class ExcludeSearch(BasePlugin):
         to_ignore = self.config["ignore"]
         exclude_tags = self.config["exclude_tags"]
 
-        if not to_exclude or not exclude_tags:
+        if not to_exclude and not exclude_tags:
             logger.info(
                 f"To exclude search entries please add any files to the mkdocs-exclude-search plugin configuration."
             )
