@@ -52,7 +52,8 @@ class ExcludeSearch(BasePlugin):
             logger.info(message)
             raise ValueError(message)
 
-    def resolve_ignored_chapters(self, to_ignore: List[str]) -> List[str]:
+    @staticmethod
+    def resolve_ignored_chapters(to_ignore: List[str]) -> List[str]:
         """
         Resolve full search index chapter entries from the user provided chapter names
         (which should be ignored from the exclusion).
