@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 import logging
-from typing import List
+from typing import List, Dict
 
 from mkdocs.config import config_options
 from mkdocs.plugins import BasePlugin
@@ -53,6 +53,19 @@ class ExcludeSearch(BasePlugin):
             raise ValueError(message)
 
     @staticmethod
+    def resolve_excluded_entries(to_exclude: List[str]) -> List[str]:
+        """
+        Resolve full search index chapter entries from the user provided excluded files,
+        chapters and directories ("*").
+        """
+        to_exclude = [f.replace(".md", "") for f in to_exclude if ".md" in f]
+        # TODO: This currently could exclude files with an excluded folder of the same name.
+        for idx, entry in enumerate(to_exclude):
+            if "*" in entry:
+                to_exclude[idx] = "".join(entry.split("/")[:-1])
+        return to_exclude
+
+    @staticmethod
     def resolve_ignored_chapters(to_ignore: List[str]) -> List[str]:
         """
         Resolve full search index chapter entries from the user provided chapter names
@@ -69,32 +82,24 @@ class ExcludeSearch(BasePlugin):
         ignored_chapters += ignored_main_records
         return ignored_chapters
 
-    def on_post_build(self, config):
-        to_exclude = self.config["exclude"]
-        exclude_tags = self.config["exclude_tags"]
-        to_ignore = self.config["ignore"]
+    @staticmethod
+    def select_records(
+        search_index: Dict,
+        to_exclude: List[str],
+        to_ignore: List[str],
+        exclude_tags: bool,
+    ) -> List[Dict]:
+        """
+        Select the search index records to be included in the final selection.
+        Args:
+            search_index:
+            to_exclude:
+            to_ignore:
+            exclude_tags:
 
-        try:
-            self.check_config(
-                config=config, to_exclude=to_exclude, exclude_tags=exclude_tags
-            )
-        except ValueError:
-            return config
+        Returns:
 
-        if to_ignore:
-            to_ignore = self.resolve_ignored_chapters(to_ignore)
-
-        # Find filenames of directory exclusions via "*"
-        to_exclude = [f.replace(".md", "") for f in to_exclude if ".md" in f]
-        # TODO: This currently could exclude files with an excluded folder of the same name.
-        for idx, entry in enumerate(to_exclude):
-            if "*" in entry:
-                to_exclude[idx] = "".join(entry.split("/")[:-1])
-
-        search_index_fp = Path(config.data["site_dir"]) / "search/search_index.json"
-        with open(search_index_fp, "r") as f:
-            search_index = json.load(f)
-
+        """
         included_records = []
         for rec in search_index["docs"]:
             if "/" not in rec["location"]:
@@ -124,6 +129,35 @@ class ExcludeSearch(BasePlugin):
                     included_records.append(rec)
                 else:
                     logger.info(f"exclude-search: {rec['location']}")
+
+        return included_records
+
+    def on_post_build(self, config):
+        to_exclude = self.config["exclude"]
+        exclude_tags = self.config["exclude_tags"]
+        to_ignore = self.config["ignore"]
+
+        try:
+            self.check_config(
+                config=config, to_exclude=to_exclude, exclude_tags=exclude_tags
+            )
+        except ValueError:
+            return config
+
+        to_exclude = self.resolve_excluded_entries(to_exclude=to_exclude)
+        if to_ignore:
+            to_ignore = self.resolve_ignored_chapters(to_ignore=to_ignore)
+
+        search_index_fp = Path(config.data["site_dir"]) / "search/search_index.json"
+        with open(search_index_fp, "r") as f:
+            search_index = json.load(f)
+
+        included_records = self.select_records(
+            search_index=search_index,
+            to_exclude=to_exclude,
+            to_ignore=to_ignore,
+            exclude_tags=exclude_tags,
+        )
 
         search_index["docs"] = included_records
         with open(search_index_fp, "w") as f:
