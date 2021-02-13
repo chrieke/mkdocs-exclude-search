@@ -53,9 +53,9 @@ class ExcludeSearch(BasePlugin):
             raise ValueError(message)
 
     @staticmethod
-    def resolve_excluded_entries(to_exclude: List[str]) -> List[str]:
+    def resolve_excluded_records(to_exclude: List[str]) -> List[str]:
         """
-        Resolve full search index chapter entries from the user provided excluded files,
+        Resolve full search index chapter records from the user provided excluded files,
         chapters and directories ("*").
         """
         to_exclude = [f.replace(".md", "") for f in to_exclude if ".md" in f]
@@ -68,7 +68,7 @@ class ExcludeSearch(BasePlugin):
     @staticmethod
     def resolve_ignored_chapters(to_ignore: List[str]) -> List[str]:
         """
-        Resolve full search index chapter entries from the user provided chapter names
+        Resolve full search index chapter records from the user provided chapter names
         (which should be ignored from the exclusion).
         """
         ignored_chapters = [f.replace(".md", "") for f in to_ignore if ".md" in f]
@@ -83,42 +83,44 @@ class ExcludeSearch(BasePlugin):
         return ignored_chapters
 
     @staticmethod
-    def select_records(
+    def select_included_records(
         search_index: Dict,
         to_exclude: List[str],
         to_ignore: List[str],
-        exclude_tags: bool,
+        exclude_tags: bool = False,
     ) -> List[Dict]:
         """
         Select the search index records to be included in the final selection.
+        # TODO: Simplify
+
         Args:
-            search_index:
-            to_exclude:
-            to_ignore:
-            exclude_tags:
+            search_index: The mkdocs search index in "config.data["site_dir"]) / "search/search_index.json"
+            to_exclude: Resolved list of excluded search index records.
+            to_ignore: Resolved list of ignored search index chapter records.
+            exclude_tags: Boolean if mkdocs-plugin-tags entries should be excluded, default False.
 
         Returns:
-
+            A new search index
         """
         included_records = []
-        for rec in search_index["docs"]:
-            if "/" not in rec["location"]:
-                if "tags.html" in rec["location"] and exclude_tags:
+        for record in search_index["docs"]:
+            if "/" not in record["location"]:
+                if "tags.html" in record["location"] and exclude_tags:
                     # Ignore entries of mkdocs-plugin-tags
                     # TODO: Surface in readme
                     continue
                 # index and other neccessary files.
-                included_records.append(rec)
+                included_records.append(record)
             else:
-                if len(rec["location"].split("/")) > 2:
-                    rec_dir = "".join(rec["location"].split("/")[:-2])
+                if len(record["location"].split("/")) > 2:
+                    rec_dir = "".join(record["location"].split("/")[:-2])
                 else:
                     rec_dir = None
-                rec_main_name, rec_subchapter = rec["location"].split("/")[-2:]
+                rec_main_name, rec_subchapter = record["location"].split("/")[-2:]
 
                 if rec_main_name + rec_subchapter in to_ignore:
                     # print("ignored", rec["location"])
-                    included_records.append(rec)
+                    included_records.append(record)
                 elif (
                     rec_dir not in to_exclude
                     and rec_main_name not in to_exclude
@@ -126,9 +128,9 @@ class ExcludeSearch(BasePlugin):
                     not in to_exclude  # Also ignore subchapters of excluded main records
                 ):
                     # print("included", rec["location"])
-                    included_records.append(rec)
+                    included_records.append(record)
                 else:
-                    logger.info(f"exclude-search: {rec['location']}")
+                    logger.info(f"exclude-search: {record['location']}")
 
         return included_records
 
@@ -144,7 +146,7 @@ class ExcludeSearch(BasePlugin):
         except ValueError:
             return config
 
-        to_exclude = self.resolve_excluded_entries(to_exclude=to_exclude)
+        to_exclude = self.resolve_excluded_records(to_exclude=to_exclude)
         if to_ignore:
             to_ignore = self.resolve_ignored_chapters(to_ignore=to_ignore)
 
@@ -152,7 +154,7 @@ class ExcludeSearch(BasePlugin):
         with open(search_index_fp, "r") as f:
             search_index = json.load(f)
 
-        included_records = self.select_records(
+        included_records = self.select_included_records(
             search_index=search_index,
             to_exclude=to_exclude,
             to_ignore=to_ignore,
