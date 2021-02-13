@@ -37,6 +37,9 @@ class ExcludeSearch(BasePlugin):
 
     @staticmethod
     def check_config(config: dict, to_exclude: List[str], exclude_tags: bool):
+        """
+        Check plugin configuration.
+        """
         if not "search" in config["plugins"]:
             message = (
                 "mkdocs-exclude-search plugin is activated but has no effect as "
@@ -48,6 +51,22 @@ class ExcludeSearch(BasePlugin):
             message = f"No excluded search entries selected for mkdocs-exclude-search."
             logger.info(message)
             raise ValueError(message)
+
+    def resolve_ignored_chapters(self, to_ignore: List[str]) -> List[str]:
+        """
+        Resolve full search index chapter entries from the user provided chapter names
+        (which should be ignored from the exclusion).
+        """
+        ignored_chapters = [f.replace(".md", "") for f in to_ignore if ".md" in f]
+        # Subchapters require both the subchapter as well as the main record to be
+        # included in the search index.
+        ignored_main_records = []
+        for chapter in ignored_chapters:
+            if not chapter.endswith(".md"):
+                ignore_entry_main_name = chapter.split("#")[0]
+                ignored_main_records.append(ignore_entry_main_name)
+        ignored_chapters += ignored_main_records
+        return ignored_chapters
 
     def on_post_build(self, config):
         to_exclude = self.config["exclude"]
@@ -61,16 +80,8 @@ class ExcludeSearch(BasePlugin):
         except ValueError:
             return config
 
-        # Find files to ignore from ignore user config.
         if to_ignore:
-            to_ignore = [f.replace(".md", "") for f in to_ignore if ".md" in f]
-            # subchapters require both the subchapter as well as the main record.
-            also_ignore = []
-            for ignore_entry in to_ignore:
-                if not ignore_entry.endswith(".md"):
-                    ignore_entry_main_name = ignore_entry.split("#")[0]
-                    also_ignore.append(ignore_entry_main_name)
-            to_ignore += also_ignore
+            to_ignore = self.resolve_ignored_chapters(to_ignore)
 
         # Find filenames of directory exclusions via "*"
         to_exclude = [f.replace(".md", "") for f in to_exclude if ".md" in f]

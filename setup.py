@@ -31,6 +31,6 @@ setup(
     ],
     packages=find_packages(),
     entry_points={
-        "mkdocs.plugins": ["exclude-search = src:ExcludeSearch"]
+        "mkdocs.plugins": ["exclude-search = mkdocs_exclude_search:ExcludeSearch"]
     },
 )
