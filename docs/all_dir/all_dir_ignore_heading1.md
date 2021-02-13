@@ -9,8 +9,3 @@ alldir text all_dir_ignore_heading1 AAin
 ## alldir header all_dir_ignore_heading1 BBex
 
 alldir text all_dir_ignore_heading1 BBex
-
-
-## alldir header all_dir_ignore_heading1 CCex
-
-alldir text all_dir_ignore_heading1 CCex
