@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 import logging
+from typing import List
 
 from mkdocs.config import config_options
 from mkdocs.plugins import BasePlugin
@@ -34,22 +35,30 @@ class ExcludeSearch(BasePlugin):
         self.enabled = True
         self.total_time = 0
 
-    def on_post_build(self, config):
+    @staticmethod
+    def check_config(config: dict, to_exclude: List[str], exclude_tags: bool):
         if not "search" in config["plugins"]:
-            logger.debug(
-                "mkdocs-exclude-search plugin is activated but has no effect as search "
-                "plugin is deactivated!"
+            message = (
+                "mkdocs-exclude-search plugin is activated but has no effect as "
+                "search plugin is deactivated!"
             )
-            return config
-
-        to_exclude = self.config["exclude"]
-        to_ignore = self.config["ignore"]
-        exclude_tags = self.config["exclude_tags"]
-
+            logger.debug(message)
+            raise ValueError(message)
         if not to_exclude and not exclude_tags:
-            logger.info(
-                f"To exclude search entries please add any files to the mkdocs-exclude-search plugin configuration."
+            message = f"No excluded search entries selected for mkdocs-exclude-search."
+            logger.info(message)
+            raise ValueError(message)
+
+    def on_post_build(self, config):
+        to_exclude = self.config["exclude"]
+        exclude_tags = self.config["exclude_tags"]
+        to_ignore = self.config["ignore"]
+
+        try:
+            self.check_config(
+                config=config, to_exclude=to_exclude, exclude_tags=exclude_tags
             )
+        except ValueError:
             return config
 
         # Find files to ignore from ignore user config.
