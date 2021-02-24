@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 import logging
 from typing import List, Dict
+from fnmatch import fnmatch
 
 from mkdocs.config import config_options
 from mkdocs.plugins import BasePlugin
@@ -58,11 +59,13 @@ class ExcludeSearch(BasePlugin):
         Resolve full search index chapter records from the user provided excluded files,
         chapters and directories ("*").
         """
-        to_exclude = [f.replace(".md", "") for f in to_exclude if ".md" in f]
+        to_exclude = [f.replace(".md", "") for f in to_exclude]
         # TODO: This currently could exclude files with an excluded folder of the same name.
         for idx, entry in enumerate(to_exclude):
-            if "*" in entry:
-                to_exclude[idx] = "".join(entry.split("/")[:-1])
+            if "#" in entry:
+                to_exclude[idx] = entry.split("#")
+            else:
+                to_exclude[idx] = [entry, None]
         return to_exclude
 
     @staticmethod
@@ -81,6 +84,13 @@ class ExcludeSearch(BasePlugin):
                 ignored_main_records.append(ignore_entry_main_name)
         ignored_chapters += ignored_main_records
         return ignored_chapters
+
+    @staticmethod
+    def is_tag_record(record: str):
+        if "tags.html" in record["location"]:
+            # Ignore entries of mkdocs-plugin-tags
+            # TODO: Surface in readme
+            return True
 
     @staticmethod
     def select_included_records(
@@ -104,33 +114,33 @@ class ExcludeSearch(BasePlugin):
         """
         included_records = []
         for record in search_index["docs"]:
-            if "/" not in record["location"]:
-                if "tags.html" in record["location"] and exclude_tags:
-                    # Ignore entries of mkdocs-plugin-tags
-                    # TODO: Surface in readme
-                    continue
+            # check if record is excluded
+            try:
+                rec_main_name, rec_chapter_name = record["location"].split("#")
+            except ValueError:
+                rec_main_name, rec_chapter_name = record["location"], None
+
+            if ExcludeSearch.is_tag_record(record) and exclude_tags:
+                continue
+            elif "/" not in record["location"]:
                 # index and other neccessary files.
                 included_records.append(record)
+                logger.debug(f"include-search (isRoot): {record['location']}")
+            # include record if filename and chapter does not match any rule
+            elif not any(
+                [
+                    fnmatch(rec_main_name, x[0])
+                    and (
+                        rec_chapter_name == x[1]
+                        or not x[1]
+                    )
+                    for x in to_exclude
+                ]
+            ):
+                included_records.append(record)
+                logger.debug(f"include-search (byRule): {record['location']}")
             else:
-                if len(record["location"].split("/")) > 2:
-                    rec_dir = "".join(record["location"].split("/")[:-2])
-                else:
-                    rec_dir = None
-                rec_main_name, rec_subchapter = record["location"].split("/")[-2:]
-
-                if rec_main_name + rec_subchapter in to_ignore:
-                    # print("ignored", rec["location"])
-                    included_records.append(record)
-                elif (
-                    rec_dir not in to_exclude
-                    and rec_main_name not in to_exclude
-                    and rec_main_name + rec_subchapter
-                    not in to_exclude  # Also ignore subchapters of excluded main records
-                ):
-                    # print("included", rec["location"])
-                    included_records.append(record)
-                else:
-                    logger.info(f"exclude-search: {record['location']}")
+                logger.info(f"exclude-search: {record['location']}")
 
         return included_records
 
