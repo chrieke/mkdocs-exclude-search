@@ -59,7 +59,7 @@ class ExcludeSearch(BasePlugin):
         Resolve full search index chapter records from the user provided excluded files,
         chapters and directories ("*").
         """
-        to_exclude = [f.replace(".md", "") for f in to_exclude]
+        to_exclude = [f.replace(".md", ".html") for f in to_exclude]
         # TODO: This currently could exclude files with an excluded folder of the same name.
         for idx, entry in enumerate(to_exclude):
             if "#" in entry:

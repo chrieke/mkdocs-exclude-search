@@ -18,9 +18,9 @@ TO_EXCLUDE = [
 RESOLVED_EXCLUDED_RECORDS = [
     ["chapter_exclude_all/*", None],
     ["chapter_exclude_heading2/*", "single-header-chapter_exclude_heading2-bbex"],
-    ["dir_chapter_ignore_heading3", None],
-    ["all_dir/*", "alldir-header-all_dir_ignore_heading1-aain"],
-    ["all_dir_sub/all_dir_sub2/*", None],
+    ["dir_chapter_ignore_heading3.html", None],
+    ["all_dir/*.html", "alldir-header-all_dir_ignore_heading1-aain"],
+    ["all_dir_sub/all_dir_sub2/*.html", None],
 ]
 
 TO_IGNORE = [
