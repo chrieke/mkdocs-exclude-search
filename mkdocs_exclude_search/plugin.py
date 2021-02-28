@@ -80,18 +80,25 @@ class ExcludeSearch(BasePlugin):
     @staticmethod
     def resolve_ignored_chapters(to_ignore: List[str]) -> List[str]:
         """
-        Resolve full search index chapter records from the user provided chapter names
-        (which should be ignored from the exclusion).
+        Supplement the search index main entry for each user provided ignored header.
+
+        In order for a header subchapter to be available in the search index, it requires one
+        "file-name" entry and one "file-name/header-name" entry.
+
+        Args:
+            to_ignore: The user provided list of ignored entries for chapters.
+
+        Returns:
+            A list with each resolved entry as a tuple of (file-name, header-name/None),
+            and with the supplemented main_name entries.
         """
-        ignored_chapters = [f.replace(".md", "") for f in to_ignore if ".md" in f]
-        # Subchapters require both the subchapter as well as the main record to be
-        # included in the search index.
-        ignored_main_records = []
-        for chapter in ignored_chapters:
-            if not chapter.endswith(".md"):
-                ignore_entry_main_name = chapter.split("#")[0]
-                ignored_main_records.append(ignore_entry_main_name)
-        ignored_chapters += ignored_main_records
+        ignored_chapters = [f.replace(".md", ".html") for f in to_ignore]
+        file_name_entries = []
+        for idx, entry in enumerate(ignored_chapters):
+            file_name, header_name = entry.split("#")
+            ignored_chapters[idx] = file_name, header_name
+            file_name_entries.append((file_name, None))
+        ignored_chapters += file_name_entries
         return ignored_chapters
 
     @staticmethod
