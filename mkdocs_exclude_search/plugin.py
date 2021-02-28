@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 import logging
-from typing import List, Dict
+from typing import List, Dict, Tuple, Union
 from fnmatch import fnmatch
 
 from mkdocs.config import config_options
@@ -54,19 +54,28 @@ class ExcludeSearch(BasePlugin):
             raise ValueError(message)
 
     @staticmethod
-    def resolve_excluded_records(to_exclude: List[str]) -> List[str]:
+    def resolve_excluded_records(
+        to_exclude: List[str],
+    ) -> List[Tuple[str, Union[str, None]]]:
         """
-        Resolve full search index chapter records from the user provided excluded files,
-        chapters and directories ("*").
+        Resolve the search index file-name and header-names from the user provided excluded entries.
+
+        Args:
+            to_exclude: The user provided list of excluded entries for files,
+                headers and directories ("*").
+
+        Returns:
+            A list with each resolved entry as a tuple of (file-name, header-name/None).
         """
-        to_exclude = [f.replace(".md", ".html") for f in to_exclude]
+        excluded_entries = [f.replace(".md", ".html") for f in to_exclude]
         # TODO: This currently could exclude files with an excluded folder of the same name.
-        for idx, entry in enumerate(to_exclude):
+        for idx, entry in enumerate(excluded_entries):
             if "#" in entry:
-                to_exclude[idx] = entry.split("#")
+                file_name, header_name = entry.split("#")
             else:
-                to_exclude[idx] = [entry, None]
-        return to_exclude
+                file_name, header_name = entry, None
+            excluded_entries[idx] = file_name, header_name
+        return excluded_entries
 
     @staticmethod
     def resolve_ignored_chapters(to_ignore: List[str]) -> List[str]:
