@@ -2,5 +2,5 @@ mkdocs-material
 pytest
 black
 twine
-mkdoc
+mkdocs
 git+https://github.com/jldiaz/mkdocs-plugin-tags.git

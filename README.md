@@ -21,9 +21,9 @@ More information about plugins in the [MkDocs documentation][mkdocs-plugins].
 
 ## Config
 
-- List the markdown files to be excluded under `exclude` using the format `filename.md`. Don't provide the directory of the file!
-- Exclude specific heading subsections using the format `filename.md#some-heading`. Chapter names are all lowercase, `-` as separator, no spaces.
-- Exclude all markdown files within a directory with `dirname/*.md` or `dirname/dirname2/*.md`.
+- List the markdown files to be excluded under `exclude` using the format `<path>/<to>/filename.md`.
+- Exclude specific heading subsections using the format `<path>/<to>/filename.md#some-heading`. Chapter names are all lowercase, `-` as separator, no spaces.
+- Exclude all markdown files within a directory (and its children) with `dirname/*.md` or `dirname/*`.
 - To only include a specific heading subsection of an excluded file, list the subsection under `ignore`. 
 
 ```yaml
@@ -31,7 +31,7 @@ plugins:
   - search
   - exclude-search:
       exclude:
-        - second.md  # Do not provide the directory of the file, only the filename!
+        - second.md
         - third.md#some-heading  
         - dir/*.md  # Only to exclude all files within a directory provide the directory!
         - dir2/sub/*.md
