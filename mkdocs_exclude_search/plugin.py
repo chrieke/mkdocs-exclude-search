@@ -137,24 +137,22 @@ class ExcludeSearch(BasePlugin):
                 rec_main_name, rec_chapter_name = record["location"], None
 
             if ExcludeSearch.is_tag_record(record) and exclude_tags:
+                logger.info(f"exclude-search (excludedTags): {record['location']}")
                 continue
             elif "/" not in record["location"]:
-                # index and other neccessary files.
+                logger.debug(f"include-search (requiredRoot): {record['location']}")
                 included_records.append(record)
-                logger.debug(f"include-search (isRoot): {record['location']}")
-            # include record if filename and chapter does not match any rule
-            elif not any(
+            elif any(
                 [
-                    fnmatch(rec_main_name, x[0])
-                    and (
-                        rec_chapter_name == x[1]
-                        or not x[1]
-                    )
-                    for x in to_exclude
+                    fnmatch(rec_file_name, f"*{file_name.replace('.md', '')}?")
+                    and header_name == rec_header_name
+                    for (file_name, header_name) in to_ignore
                 ]
             ):
+                logger.info(f"include-search (ignoredRule): {record['location']}")
+                # e.g. rec_file_name, rec_header_name ('all_dir/all_dir_ignore_heading1/', None) with
+                # to_exclude ('all_dir_ignore_heading1.md', None)
                 included_records.append(record)
-                logger.debug(f"include-search (byRule): {record['location']}")
             else:
                 logger.info(f"exclude-search: {record['location']}")
 
