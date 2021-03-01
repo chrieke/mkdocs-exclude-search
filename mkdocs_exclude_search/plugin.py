@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 import logging
-from typing import List, Dict
+from typing import List, Dict, Tuple, Union
 from fnmatch import fnmatch
 
 from mkdocs.config import config_options
@@ -54,54 +54,113 @@ class ExcludeSearch(BasePlugin):
             raise ValueError(message)
 
     @staticmethod
-    def resolve_excluded_records(to_exclude: List[str]) -> List[str]:
+    def resolve_excluded_records(
+        to_exclude: List[str],
+    ) -> List[Tuple[str, Union[str, None]]]:
         """
-        Resolve full search index chapter records from the user provided excluded files,
-        chapters and directories ("*").
+        Resolve the search index file-name and header-names from the user provided excluded entries.
+
+        Args:
+            to_exclude: The user provided list of excluded entries for files,
+                headers and directories ("*").
+
+        Returns:
+            A list with each resolved entry as a tuple of (file-name, header-name/None).
         """
-        to_exclude = [f.replace(".md", ".html") for f in to_exclude]
+        excluded_entries = to_exclude[:]
         # TODO: This currently could exclude files with an excluded folder of the same name.
-        for idx, entry in enumerate(to_exclude):
-            if "#" in entry:
-                to_exclude[idx] = entry.split("#")
-            else:
-                to_exclude[idx] = [entry, None]
-        return to_exclude
+        for idx, entry in enumerate(excluded_entries):
+            try:
+                file_name, header_name = entry.split("#")
+            except ValueError:
+                file_name, header_name = entry, None
+            excluded_entries[idx] = file_name, header_name
+        return excluded_entries
 
     @staticmethod
     def resolve_ignored_chapters(to_ignore: List[str]) -> List[str]:
         """
-        Resolve full search index chapter records from the user provided chapter names
-        (which should be ignored from the exclusion).
+        Supplement the search index main entry for each user provided ignored header.
+
+        In order for a header subchapter to be available in the search index, it requires one
+        "file-name" entry and one "file-name/header-name" entry.
+
+        Args:
+            to_ignore: The user provided list of ignored entries for chapters.
+
+        Returns:
+            A list with each resolved entry as a tuple of (file-name, header-name/None),
+            and with the supplemented main_name entries.
         """
-        ignored_chapters = [f.replace(".md", "") for f in to_ignore if ".md" in f]
-        # Subchapters require both the subchapter as well as the main record to be
-        # included in the search index.
-        ignored_main_records = []
-        for chapter in ignored_chapters:
-            if not chapter.endswith(".md"):
-                ignore_entry_main_name = chapter.split("#")[0]
-                ignored_main_records.append(ignore_entry_main_name)
-        ignored_chapters += ignored_main_records
+        ignored_chapters = to_ignore[:]
+        file_name_entries = []
+        for idx, entry in enumerate(to_ignore):
+            file_name, header_name = entry.split("#")
+            ignored_chapters[idx] = file_name, header_name
+            file_name_entries.append((file_name, None))
+        ignored_chapters += file_name_entries
         return ignored_chapters
 
     @staticmethod
-    def is_tag_record(record: str):
-        if "tags.html" in record["location"]:
-            # Ignore entries of mkdocs-plugin-tags
-            # TODO: Surface in readme
+    def is_tag_record(rec_file_name: str):
+        """Tags entries of mkdocs-plugin-tags"""
+        # TODO: Surface in readme
+        if "tags.html" in rec_file_name:
             return True
 
     @staticmethod
+    def is_root_record(rec_file_name: str):
+        """Required mkdocs root files"""
+        if "/" not in rec_file_name:
+            return True
+
+    @staticmethod
+    def is_ignored_record(
+        rec_file_name: str, rec_header_name: Union[str, None], to_ignore: List
+    ):
+        """
+        Headers selected by the user as to be ignored from the exclusions.
+
+        e.g. rec_file_name, rec_header_name ('all_dir/all_dir_ignore_heading1/', None) with
+        to_exclude ('all_dir_ignore_heading1.md', None)
+        """
+        if any(
+            [
+                fnmatch(rec_file_name, f"*{file_name.replace('.md', '')}?")
+                and header_name == rec_header_name
+                for (file_name, header_name) in to_ignore
+            ]
+        ):
+            return True
+
+    @staticmethod
+    def is_excluded_record(
+        rec_file_name: str, rec_header_name: Union[str, None], to_exclude: List
+    ):
+        """
+        Files, headers or directories selected by the user to be excluded.
+
+        e.g. rec_file_name, rec_header_name ('chapter_exclude_all/', None) with
+        to_exclude ('chapter_exclude_all.md', None)
+        """
+        if any(
+            [
+                fnmatch(rec_file_name, f"*{file_name.replace('.md', '')}?")
+                and (rec_header_name == header_name or not header_name)
+                for (file_name, header_name) in to_exclude
+            ]
+        ):
+            return True
+
     def select_included_records(
+        self,
         search_index: Dict,
-        to_exclude: List[str],
-        to_ignore: List[str],
+        to_exclude: List[Union[Tuple[str, None], Tuple[str, str]]],
+        to_ignore: List[Union[Tuple[str, None], Tuple[str, str]]],
         exclude_tags: bool = False,
     ) -> List[Dict]:
         """
         Select the search index records to be included in the final selection.
-        # TODO: Simplify
 
         Args:
             search_index: The mkdocs search index in "config.data["site_dir"]) / "search/search_index.json"
@@ -110,37 +169,30 @@ class ExcludeSearch(BasePlugin):
             exclude_tags: Boolean if mkdocs-plugin-tags entries should be excluded, default False.
 
         Returns:
-            A new search index
+            A new search index as a list of dicts.
         """
         included_records = []
         for record in search_index["docs"]:
-            # check if record is excluded
             try:
-                rec_main_name, rec_chapter_name = record["location"].split("#")
+                rec_file_name, rec_header_name = record["location"].split("#")
             except ValueError:
-                rec_main_name, rec_chapter_name = record["location"], None
+                rec_file_name, rec_header_name = record["location"], None
 
-            if ExcludeSearch.is_tag_record(record) and exclude_tags:
+            if self.is_tag_record(rec_file_name) and exclude_tags:
+                logger.info(f"exclude-search (excludedTags): {record['location']}")
                 continue
-            elif "/" not in record["location"]:
-                # index and other neccessary files.
+            elif self.is_root_record(rec_file_name):
+                logger.debug(f"include-search (requiredRoot): {record['location']}")
                 included_records.append(record)
-                logger.debug(f"include-search (isRoot): {record['location']}")
-            # include record if filename and chapter does not match any rule
-            elif not any(
-                [
-                    fnmatch(rec_main_name, x[0])
-                    and (
-                        rec_chapter_name == x[1]
-                        or not x[1]
-                    )
-                    for x in to_exclude
-                ]
-            ):
+            elif self.is_ignored_record(rec_file_name, rec_header_name, to_ignore):
+                logger.info(f"include-search (ignoredRule): {record['location']}")
                 included_records.append(record)
-                logger.debug(f"include-search (byRule): {record['location']}")
+            elif self.is_excluded_record(rec_file_name, rec_header_name, to_exclude):
+                logger.info(f"exclude-search (excludedRule): {record['location']}")
+                continue
             else:
-                logger.info(f"exclude-search: {record['location']}")
+                logger.debug(f"include-search (noRule): {record['location']}")
+                included_records.append(record)
 
         return included_records
 
