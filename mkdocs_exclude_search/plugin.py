@@ -70,9 +70,9 @@ class ExcludeSearch(BasePlugin):
         excluded_entries = to_exclude[:]
         # TODO: This currently could exclude files with an excluded folder of the same name.
         for idx, entry in enumerate(excluded_entries):
-            if "#" in entry:
+            try:
                 file_name, header_name = entry.split("#")
-            else:
+            except ValueError:
                 file_name, header_name = entry, None
             excluded_entries[idx] = file_name, header_name
         return excluded_entries
@@ -102,14 +102,58 @@ class ExcludeSearch(BasePlugin):
         return ignored_chapters
 
     @staticmethod
-    def is_tag_record(record: str):
-        if "tags.html" in record["location"]:
-            # Ignore entries of mkdocs-plugin-tags
-            # TODO: Surface in readme
+    def is_tag_record(rec_file_name: str):
+        """Tags entries of mkdocs-plugin-tags"""
+        # TODO: Surface in readme
+        if "tags.html" in rec_file_name:
             return True
 
     @staticmethod
+    def is_root_record(rec_file_name: str):
+        """Required mkdocs root files"""
+        if "/" not in rec_file_name:
+            return True
+
+    @staticmethod
+    def is_ignored_record(
+        rec_file_name: str, rec_header_name: Union[str, None], to_ignore: List
+    ):
+        """
+        Headers selected by the user as to be ignored from the exclusions.
+
+        e.g. rec_file_name, rec_header_name ('all_dir/all_dir_ignore_heading1/', None) with
+        to_exclude ('all_dir_ignore_heading1.md', None)
+        """
+        if any(
+            [
+                fnmatch(rec_file_name, f"*{file_name.replace('.md', '')}?")
+                and header_name == rec_header_name
+                for (file_name, header_name) in to_ignore
+            ]
+        ):
+            return True
+
+    @staticmethod
+    def is_excluded_record(
+        rec_file_name: str, rec_header_name: Union[str, None], to_exclude: List
+    ):
+        """
+        Files, headers or directories selected by the user to be excluded.
+
+        e.g. rec_file_name, rec_header_name ('chapter_exclude_all/', None) with
+        to_exclude ('chapter_exclude_all.md', None)
+        """
+        if any(
+            [
+                fnmatch(rec_file_name, f"*{file_name.replace('.md', '')}?")
+                and (rec_header_name == header_name or not header_name)
+                for (file_name, header_name) in to_exclude
+            ]
+        ):
+            return True
+
     def select_included_records(
+        self,
         search_index: Dict,
         to_exclude: List[Union[Tuple[str, None], Tuple[str, str]]],
         to_ignore: List[Union[Tuple[str, None], Tuple[str, str]]],
@@ -129,39 +173,22 @@ class ExcludeSearch(BasePlugin):
         """
         included_records = []
         for record in search_index["docs"]:
-            # check if record is excluded
             try:
                 rec_file_name, rec_header_name = record["location"].split("#")
             except ValueError:
                 rec_file_name, rec_header_name = record["location"], None
 
-            if ExcludeSearch.is_tag_record(record) and exclude_tags:
+            if self.is_tag_record(rec_file_name) and exclude_tags:
                 logger.info(f"exclude-search (excludedTags): {record['location']}")
                 continue
-            elif "/" not in record["location"]:
+            elif self.is_root_record(rec_file_name):
                 logger.debug(f"include-search (requiredRoot): {record['location']}")
                 included_records.append(record)
-            elif any(
-                [
-                    fnmatch(rec_file_name, f"*{file_name.replace('.md', '')}?")
-                    and header_name == rec_header_name
-                    for (file_name, header_name) in to_ignore
-                ]
-            ):
+            elif self.is_ignored_record(rec_file_name, rec_header_name, to_ignore):
                 logger.info(f"include-search (ignoredRule): {record['location']}")
-                # e.g. rec_file_name, rec_header_name ('all_dir/all_dir_ignore_heading1/', None) with
-                # to_exclude ('all_dir_ignore_heading1.md', None)
                 included_records.append(record)
-            elif any(
-                [
-                    fnmatch(rec_file_name, f"*{file_name.replace('.md', '')}?")
-                    and (rec_header_name == header_name or not header_name)
-                    for (file_name, header_name) in to_exclude
-                ]
-            ):
+            elif self.is_excluded_record(rec_file_name, rec_header_name, to_exclude):
                 logger.info(f"exclude-search (excludedRule): {record['location']}")
-                # e.g. rec_file_name, rec_header_name ('chapter_exclude_all/', None) with
-                # to_exclude ('chapter_exclude_all.md', None)
                 continue
             else:
                 logger.debug(f"include-search (noRule): {record['location']}")
