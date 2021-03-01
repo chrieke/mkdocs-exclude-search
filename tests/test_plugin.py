@@ -16,11 +16,12 @@ TO_EXCLUDE = [
 ]
 
 RESOLVED_EXCLUDED_RECORDS = [
-    ["chapter_exclude_all/*", None],
-    ["chapter_exclude_heading2/*", "single-header-chapter_exclude_heading2-bbex"],
-    ["dir_chapter_ignore_heading3.html", None],
-    ["all_dir/*.html", "alldir-header-all_dir_ignore_heading1-aain"],
-    ["all_dir_sub/all_dir_sub2/*.html", None],
+    ("chapter_exclude_all.md", None),
+    ("chapter_exclude_heading2.md", "single-header-chapter_exclude_heading2-bbex"),
+    ("dir_chapter_exclude_all.md", None),
+    ("dir_chapter_ignore_heading3.md", None),
+    ("all_dir/*.md", None),
+    ("all_dir_sub/all_dir_sub2/*.md", None),
 ]
 
 TO_IGNORE = [
@@ -29,10 +30,13 @@ TO_IGNORE = [
 ]
 
 RESOLVED_IGNORED_CHAPTERS = [
-    "dir_chapter_ignore_heading3#dir-single-header-dir_chapter_ignore_heading3-ccin",
-    "all_dir_ignore_heading1#alldir-header-all_dir_ignore_heading1-aain",
-    "dir_chapter_ignore_heading3",
-    "all_dir_ignore_heading1",
+    (
+        "dir_chapter_ignore_heading3.md",
+        "dir-single-header-dir_chapter_ignore_heading3-ccin",
+    ),
+    ("all_dir_ignore_heading1.md", "alldir-header-all_dir_ignore_heading1-aain"),
+    ("dir_chapter_ignore_heading3.md", None),
+    ("all_dir_ignore_heading1.md", None),
 ]
 
 EXCLUDE_TAGS = False
