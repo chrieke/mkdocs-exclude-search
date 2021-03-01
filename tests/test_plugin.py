@@ -237,19 +237,3 @@ def test_select_records_exclude_tags():
     assert len(included_records) != len(INCLUDED_RECORDS)
     for rec in included_records:
         assert not "tags.html" in rec["location"]
-
-
-# def test_select_records_aa():
-#     _location_ = Path(__file__).resolve().parent
-#     with open(_location_.joinpath("mock_data/mock_search_index.json"), "r") as f:
-#         mock_search_index = json.load(f)
-#
-#     included_records = ExcludeSearch.select_included_records(
-#         search_index=mock_search_index,
-#         to_exclude=RESOLVED_EXCLUDED_RECORDS,
-#         to_ignore=RESOLVED_IGNORED_CHAPTERS,
-#         exclude_tags=EXCLUDE_TAGS,
-#     )
-#     assert isinstance(included_records, list)
-#     assert isinstance(included_records[0], dict)
-#     assert included_records == INCLUDED_RECORDS
