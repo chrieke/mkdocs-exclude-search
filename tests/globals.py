@@ -2,8 +2,8 @@ CONFIG = {"plugins": ["search"]}
 TO_EXCLUDE = [
     "chapter_exclude_all.md",
     "chapter_exclude_heading2.md#single-header-chapter_exclude_heading2-bbex",
-    "dir_chapter_exclude_all.md",
-    "dir_chapter_ignore_heading3.md",
+    "dir/dir_chapter_exclude_all.md",
+    "dir/dir_chapter_ignore_heading3.md",
     "all_dir/*.md",
     "all_dir_sub/all_dir_sub2/*.md",
 ]
@@ -11,8 +11,8 @@ TO_EXCLUDE = [
 RESOLVED_EXCLUDED_RECORDS = [
     ("chapter_exclude_all.md", None),
     ("chapter_exclude_heading2.md", "single-header-chapter_exclude_heading2-bbex"),
-    ("dir_chapter_exclude_all.md", None),
-    ("dir_chapter_ignore_heading3.md", None),
+    ("dir/dir_chapter_exclude_all.md", None),
+    ("dir/dir_chapter_ignore_heading3.md", None),
     ("all_dir/*.md", None),
     ("all_dir_sub/all_dir_sub2/*.md", None),
 ]
