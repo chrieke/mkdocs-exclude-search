@@ -10,4 +10,4 @@ sys.path.insert(
 )
 
 # pylint: disable=wrong-import-position,unused-import
-from mkdocs_exclude_search.plugin import ExcludeSearch
+from plugin import ExcludeSearch
