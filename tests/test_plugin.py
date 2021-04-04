@@ -3,7 +3,7 @@ import json
 
 import pytest
 
-from mkdocs_exclude_search.plugin import ExcludeSearch
+from .context import ExcludeSearch
 
 
 CONFIG = {"plugins": ["search"]}
