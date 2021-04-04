@@ -200,10 +200,12 @@ def test_is_excluded_record():
         to_exclude=[("all_dir_sub/all_dir_sub2/*.md", None)],
     )
 
+
+def test_is_excluded_record_ignores_partial_filename_matches():
     assert not ExcludeSearch.is_excluded_record(
-        rec_file_name="chapter_exclude_all/",
+        rec_file_name="do_not_match_chapter_exclude_all/",
         rec_header_name=None,
-        to_exclude=[("chapter_exclude_all.md", "something")],
+        to_exclude=[("chapter_exclude_all.md", None)],
     )
 
 
