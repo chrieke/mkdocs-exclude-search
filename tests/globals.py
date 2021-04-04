@@ -18,18 +18,21 @@ RESOLVED_EXCLUDED_RECORDS = [
 ]
 
 TO_IGNORE = [
-    "dir_chapter_ignore_heading3.md#dir-single-header-dir_chapter_ignore_heading3-ccin",
-    "all_dir_ignore_heading1.md#alldir-header-all_dir_ignore_heading1-aain",
+    "dir/dir_chapter_ignore_heading3.md#dir-single-header-dir_chapter_ignore_heading3-ccin",
+    "all_dir/all_dir_ignore_heading1.md#alldir-header-all_dir_ignore_heading1-aain",
 ]
 
 RESOLVED_IGNORED_CHAPTERS = [
     (
-        "dir_chapter_ignore_heading3.md",
+        "dir/dir_chapter_ignore_heading3.md",
         "dir-single-header-dir_chapter_ignore_heading3-ccin",
     ),
-    ("all_dir_ignore_heading1.md", "alldir-header-all_dir_ignore_heading1-aain"),
-    ("dir_chapter_ignore_heading3.md", None),
-    ("all_dir_ignore_heading1.md", None),
+    (
+        "all_dir/all_dir_ignore_heading1.md",
+        "alldir-header-all_dir_ignore_heading1-aain",
+    ),
+    ("dir/dir_chapter_ignore_heading3.md", None),
+    ("all_dir/all_dir_ignore_heading1.md", None),
 ]
 
 EXCLUDE_TAGS = False
