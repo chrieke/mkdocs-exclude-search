@@ -171,7 +171,6 @@ def test_is_ignored_record():
     )
 
 
-
 def test_is_excluded_record():
     # file
     assert ExcludeSearch.is_excluded_record(
@@ -191,6 +190,12 @@ def test_is_excluded_record():
         rec_header_name="header-chapter_exclude_all-aex",
         to_exclude=[("chapter_exclude_all.md", None)],
     )
+    # file in dir
+    assert ExcludeSearch.is_excluded_record(
+        rec_file_name="dir/dir_chapter_exclude_all/",
+        rec_header_name=None,
+        to_exclude=[("dir/dir_chapter_exclude_all.md", None)],
+    )
     # dir
     assert ExcludeSearch.is_excluded_record(
         rec_file_name="all_dir/some-chapter/",
@@ -209,7 +214,7 @@ def test_is_excluded_record():
         rec_header_name=None,
         to_exclude=[("all_dir_sub/all_dir_sub2/*.md", None)],
     )
-    #subdir + header
+    # subdir + header
     assert ExcludeSearch.is_excluded_record(
         rec_file_name="all_dir_sub/all_dir_sub2/some-chapter/",
         rec_header_name="alldir-header-all_dir_sub2-aex",
