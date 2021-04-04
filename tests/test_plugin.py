@@ -141,7 +141,7 @@ def test_resolve_ignored_chapters():
     )
     assert isinstance(resolved_ignored_chapters, list)
     assert isinstance(resolved_ignored_chapters[0], tuple)
-    assert resolved_ignored_chapters == RESOLVED_IGNORED_CHAPTERS
+    assert set(resolved_ignored_chapters) == set(RESOLVED_IGNORED_CHAPTERS)
 
 
 def test_is_tag_record():
