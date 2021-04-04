@@ -134,7 +134,7 @@ class ExcludeSearch(BasePlugin):
         """
         if any(
             (
-                fnmatch(rec_file_name, f"*{file_name.replace('.md', '')}?")
+                fnmatch(rec_file_name[:-1], f"{file_name.replace('.md', '')}")
                 and header_name == rec_header_name
                 for (file_name, header_name) in to_ignore
             )

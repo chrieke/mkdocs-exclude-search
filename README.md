@@ -41,7 +41,7 @@ plugins:
         - dir/*.md
         - dir2/sub/*.md
       ignore:
-        - second.md#another-heading
+        - dir/second.md#some-heading
 
 ```
 ```yaml
