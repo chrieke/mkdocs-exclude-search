@@ -49,7 +49,7 @@ class ExcludeSearch(BasePlugin):
             logger.debug(message)
             raise ValueError(message)
         if not to_exclude and not exclude_tags:
-            message = f"No excluded search entries selected for mkdocs-exclude-search."
+            message = "No excluded search entries selected for mkdocs-exclude-search."
             logger.info(message)
             raise ValueError(message)
 
@@ -132,11 +132,11 @@ class ExcludeSearch(BasePlugin):
             True if the record matches with the to_ignore list, None if not.
         """
         if any(
-            [
+            (
                 fnmatch(rec_file_name, f"*{file_name.replace('.md', '')}?")
                 and header_name == rec_header_name
                 for (file_name, header_name) in to_ignore
-            ]
+            )
         ):
             return True
 
@@ -158,11 +158,11 @@ class ExcludeSearch(BasePlugin):
             True if the record matches with the to_exclude list, None if not.
         """
         if any(
-            [
+            (
                 fnmatch(rec_file_name, f"*{file_name.replace('.md', '')}?")
                 and (rec_header_name == header_name or not header_name)
                 for (file_name, header_name) in to_exclude
-            ]
+            )
         ):
             return True
 
@@ -192,6 +192,7 @@ class ExcludeSearch(BasePlugin):
             except ValueError:
                 rec_file_name, rec_header_name = record["location"], None
 
+            # pylint: disable=no-else-continue
             if self.is_tag_record(rec_file_name) and exclude_tags:
                 logger.info(f"exclude-search (excludedTags): {record['location']}")
                 continue

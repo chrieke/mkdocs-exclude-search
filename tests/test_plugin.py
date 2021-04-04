@@ -47,7 +47,9 @@ INCLUDED_RECORDS = [
     {"location": "#index", "text": "Hello, hello", "title": "Index"},
     {
         "location": "chapter_exclude_heading2/",
-        "text": "single chapter_exclude_heading2 Header Ain single header chapter_exclude_heading2 AAin single text chapter_exclude_heading2 AAin single header chapter_exclude_heading2 BBex single text chapter_exclude_heading2 BBex",
+        "text": "single chapter_exclude_heading2 Header Ain single header chapter_exclude_"
+        "heading2 AAin single text chapter_exclude_heading2 AAin single header "
+        "chapter_exclude_heading2 BBex single text chapter_exclude_heading2 BBex",
         "title": "chapter_exclude_heading2",
     },
     {
@@ -62,7 +64,9 @@ INCLUDED_RECORDS = [
     },
     {
         "location": "all_dir/all_dir_ignore_heading1/",
-        "text": "alldir Header all_dir_ignore_heading1 Aex alldir header all_dir_ignore_heading1 AAin alldir text all_dir_ignore_heading1 AAin alldir header all_dir_ignore_heading1 BBex alldir text all_dir_ignore_heading1 BBex",
+        "text": "alldir Header all_dir_ignore_heading1 Aex alldir header all_dir_ignore_"
+        "heading1 AAin alldir text all_dir_ignore_heading1 AAin alldir header "
+        "all_dir_ignore_heading1 BBex alldir text all_dir_ignore_heading1 BBex",
         "title": "all_dir_ignore_heading1",
     },
     {
@@ -72,7 +76,10 @@ INCLUDED_RECORDS = [
     },
     {
         "location": "dir/dir_chapter_ignore_heading3/",
-        "text": "dir single Header dir_chapter_ignore_heading3 Aex dir single header dir_chapter_ignore_heading3 AAex dir single text dir_chapter_ignore_heading3 AAex dir single header dir_chapter_ignore_heading3 CCin dir single text dir_chapter_ignore_heading3 CCin",
+        "text": "dir single Header dir_chapter_ignore_heading3 Aex dir single header "
+        "dir_chapter_ignore_heading3 AAex dir single text dir_chapter_ignore_heading3 "
+        "AAex dir single header dir_chapter_ignore_heading3 CCin dir single text "
+        "dir_chapter_ignore_heading3 CCin",
         "title": "dir_chapter_ignore_heading3",
     },
     {
