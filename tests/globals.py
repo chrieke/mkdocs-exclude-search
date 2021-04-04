@@ -4,8 +4,8 @@ TO_EXCLUDE = [
     "chapter_exclude_heading2.md#single-header-chapter_exclude_heading2-bbex",
     "dir/dir_chapter_exclude_all.md",
     "dir/dir_chapter_ignore_heading3.md",
-    "all_dir/*.md",
-    "all_dir_sub/all_dir_sub2/*.md",
+    "all_dir/*",
+    "all_dir_sub/all_dir_sub2/*",
 ]
 
 RESOLVED_EXCLUDED_RECORDS = [
@@ -13,8 +13,8 @@ RESOLVED_EXCLUDED_RECORDS = [
     ("chapter_exclude_heading2.md", "single-header-chapter_exclude_heading2-bbex"),
     ("dir/dir_chapter_exclude_all.md", None),
     ("dir/dir_chapter_ignore_heading3.md", None),
-    ("all_dir/*.md", None),
-    ("all_dir_sub/all_dir_sub2/*.md", None),
+    ("all_dir/*", None),
+    ("all_dir_sub/all_dir_sub2/*", None),
 ]
 
 TO_IGNORE = [

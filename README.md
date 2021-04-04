@@ -39,7 +39,7 @@ plugins:
         - first.md
         - dir/second.md
         - third.md#some-heading
-        - dir2/*.md
+        - dir2/*
       ignore:
         - dir/second.md#some-heading
 
