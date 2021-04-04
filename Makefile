@@ -2,6 +2,7 @@ install:
 	pip install -e .
 
 test:
+	rm -r .pytest_cache || true
 	black .
 	python -m pytest --pylint --pylint-rcfile=./pylintrc --mypy --mypy-ignore-missing-imports --cov=mkdocs_exclude_search/ --durations=3
 	RET_VALUE=$?
