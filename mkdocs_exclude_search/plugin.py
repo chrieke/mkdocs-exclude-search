@@ -67,18 +67,18 @@ class ExcludeSearch(BasePlugin):
         Returns:
             A list with each resolved entry as a tuple of (file-name, header-name/None).
         """
-        excluded_entries = to_exclude[:]
+        excluded_entries = []
         # TODO: This currently could exclude files with an excluded folder of the same name.
-        for idx, entry in enumerate(excluded_entries):
+        for entry in to_exclude:
             try:
                 file_name, header_name = entry.split("#")
             except ValueError:
-                file_name, header_name = entry, None
-            excluded_entries[idx] = file_name, header_name
+                file_name, header_name = entry, None  # type: ignore
+            excluded_entries.append((file_name, header_name))
         return excluded_entries
 
     @staticmethod
-    def resolve_ignored_chapters(to_ignore: List[str]) -> List[str]:
+    def resolve_ignored_chapters(to_ignore: List[str]) -> List:
         """
         Supplement the search index main entry for each user provided ignored header.
 
@@ -92,13 +92,14 @@ class ExcludeSearch(BasePlugin):
             A list with each resolved entry as a tuple of (file-name, header-name/None),
             and with the supplemented main_name entries.
         """
-        ignored_chapters = to_ignore[:]
         file_name_entries = []
-        for idx, entry in enumerate(to_ignore):
+        file_header_names_entries = []
+        for entry in to_ignore:
             file_name, header_name = entry.split("#")
-            ignored_chapters[idx] = file_name, header_name
             file_name_entries.append((file_name, None))
-        ignored_chapters += file_name_entries
+            file_header_names_entries.append((file_name, header_name))
+
+        ignored_chapters = file_name_entries + file_header_names_entries  # type: ignore
         return ignored_chapters
 
     @staticmethod
