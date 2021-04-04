@@ -116,13 +116,20 @@ class ExcludeSearch(BasePlugin):
 
     @staticmethod
     def is_ignored_record(
-        rec_file_name: str, rec_header_name: Union[str, None], to_ignore: List
-    ):
+        rec_file_name: str, rec_header_name: Union[str, None], to_ignore: List[Tuple]
+    ) -> Union[bool, None]:
         """
         Headers selected by the user as to be ignored from the exclusions.
 
-        e.g. rec_file_name, rec_header_name ('all_dir/all_dir_ignore_heading1/', None) with
-        to_exclude ('all_dir_ignore_heading1.md', None)
+        Args:
+            rec_file_name: The file name as in the search index record, e.g. 'all_dir/all_dir_ignore_heading1/'
+            rec_header_name: The header name as in the search index record, e.g. None or
+                'single-header-chapter_exclude_heading2-bbex'
+            to_ignore: The list of to be ignored (records (from the exclusion) with tuples
+                of (rec_file_name, rec_header_name), e.g. ('chapter_exclude_all.md', None)
+
+        Returns:
+            True if the record matches with the to_ignore list, None if not.
         """
         if any(
             [
@@ -135,13 +142,20 @@ class ExcludeSearch(BasePlugin):
 
     @staticmethod
     def is_excluded_record(
-        rec_file_name: str, rec_header_name: Union[str, None], to_exclude: List
-    ):
+        rec_file_name: str, rec_header_name: Union[str, None], to_exclude: List[Tuple]
+    ) -> Union[bool, None]:
         """
         Files, headers or directories selected by the user to be excluded.
 
-        e.g. rec_file_name, rec_header_name ('chapter_exclude_all/', None) with
-        to_exclude ('chapter_exclude_all.md', None)
+        Args:
+            rec_file_name: The file name as in the search index record, e.g. 'chapter_exclude_all/'
+            rec_header_name: The header name as in the search index record, e.g. None or
+                'single-header-chapter_exclude_heading2-bbex'
+            to_exclude: The list of to be excluded records with tuples of (rec_file_name, rec_header_name),
+                e.g. ('chapter_exclude_all.md', None)
+
+        Returns:
+            True if the record matches with the to_exclude list, None if not.
         """
         if any(
             [
