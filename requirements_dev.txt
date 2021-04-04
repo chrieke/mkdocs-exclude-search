@@ -1,6 +1,15 @@
+mkdocs
 mkdocs-material
-pytest
 black
 twine
-mkdocs
+pytest
+pylint
+pytest
+pytest-pylint
+pytest-sugar
+mypy
+mypy-extensions
+pytest-cov
+pytest-mypy
+coverage-badge
 git+https://github.com/jldiaz/mkdocs-plugin-tags.git
