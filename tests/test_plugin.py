@@ -3,7 +3,7 @@ import json
 
 import pytest
 
-from mkdocs_exclude_search.plugin import ExcludeSearch
+from .context import ExcludeSearch
 
 
 CONFIG = {"plugins": ["search"]}
@@ -47,7 +47,9 @@ INCLUDED_RECORDS = [
     {"location": "#index", "text": "Hello, hello", "title": "Index"},
     {
         "location": "chapter_exclude_heading2/",
-        "text": "single chapter_exclude_heading2 Header Ain single header chapter_exclude_heading2 AAin single text chapter_exclude_heading2 AAin single header chapter_exclude_heading2 BBex single text chapter_exclude_heading2 BBex",
+        "text": "single chapter_exclude_heading2 Header Ain single header chapter_exclude_"
+        "heading2 AAin single text chapter_exclude_heading2 AAin single header "
+        "chapter_exclude_heading2 BBex single text chapter_exclude_heading2 BBex",
         "title": "chapter_exclude_heading2",
     },
     {
@@ -62,7 +64,9 @@ INCLUDED_RECORDS = [
     },
     {
         "location": "all_dir/all_dir_ignore_heading1/",
-        "text": "alldir Header all_dir_ignore_heading1 Aex alldir header all_dir_ignore_heading1 AAin alldir text all_dir_ignore_heading1 AAin alldir header all_dir_ignore_heading1 BBex alldir text all_dir_ignore_heading1 BBex",
+        "text": "alldir Header all_dir_ignore_heading1 Aex alldir header all_dir_ignore_"
+        "heading1 AAin alldir text all_dir_ignore_heading1 AAin alldir header "
+        "all_dir_ignore_heading1 BBex alldir text all_dir_ignore_heading1 BBex",
         "title": "all_dir_ignore_heading1",
     },
     {
@@ -72,7 +76,10 @@ INCLUDED_RECORDS = [
     },
     {
         "location": "dir/dir_chapter_ignore_heading3/",
-        "text": "dir single Header dir_chapter_ignore_heading3 Aex dir single header dir_chapter_ignore_heading3 AAex dir single text dir_chapter_ignore_heading3 AAex dir single header dir_chapter_ignore_heading3 CCin dir single text dir_chapter_ignore_heading3 CCin",
+        "text": "dir single Header dir_chapter_ignore_heading3 Aex dir single header "
+        "dir_chapter_ignore_heading3 AAex dir single text dir_chapter_ignore_heading3 "
+        "AAex dir single header dir_chapter_ignore_heading3 CCin dir single text "
+        "dir_chapter_ignore_heading3 CCin",
         "title": "dir_chapter_ignore_heading3",
     },
     {
@@ -134,7 +141,7 @@ def test_resolve_ignored_chapters():
     )
     assert isinstance(resolved_ignored_chapters, list)
     assert isinstance(resolved_ignored_chapters[0], tuple)
-    assert resolved_ignored_chapters == RESOLVED_IGNORED_CHAPTERS
+    assert set(resolved_ignored_chapters) == set(RESOLVED_IGNORED_CHAPTERS)
 
 
 def test_is_tag_record():
@@ -172,38 +179,53 @@ def test_is_ignored_record():
 
 
 def test_is_excluded_record():
+    # file
     assert ExcludeSearch.is_excluded_record(
         rec_file_name="chapter_exclude_all/",
         rec_header_name=None,
         to_exclude=[("chapter_exclude_all.md", None)],
     )
+    # file with multiple excluded
+    assert not ExcludeSearch.is_excluded_record(
+        rec_file_name="chapter_exclude_all/",
+        rec_header_name=None,
+        to_exclude=[("chapter_exclude_all.md", "something.md")],
+    )
+    # file + header
     assert ExcludeSearch.is_excluded_record(
         rec_file_name="chapter_exclude_all/",
         rec_header_name="header-chapter_exclude_all-aex",
         to_exclude=[("chapter_exclude_all.md", None)],
     )
+    # file in dir
+    assert ExcludeSearch.is_excluded_record(
+        rec_file_name="dir/dir_chapter_exclude_all/",
+        rec_header_name=None,
+        to_exclude=[("dir/dir_chapter_exclude_all.md", None)],
+    )
     # dir
     assert ExcludeSearch.is_excluded_record(
-        rec_file_name="all_dir/all_dir/",
+        rec_file_name="all_dir/some-chapter/",
         rec_header_name=None,
+        to_exclude=[("all_dir/*.md", None)],
+    )
+    # dir + header
+    assert ExcludeSearch.is_excluded_record(
+        rec_file_name="all_dir/some-chapter/",
+        rec_header_name="all_dir/some-chapter-aex",
         to_exclude=[("all_dir/*.md", None)],
     )
     # subdir
     assert ExcludeSearch.is_excluded_record(
-        rec_file_name="all_dir_sub/all_dir_sub2/all_dir_sub2_1/",
+        rec_file_name="all_dir_sub/all_dir_sub2/some-chapter/",
         rec_header_name=None,
         to_exclude=[("all_dir_sub/all_dir_sub2/*.md", None)],
     )
+    # subdir + header
     assert ExcludeSearch.is_excluded_record(
-        rec_file_name="all_dir_sub/all_dir_sub2/all_dir_sub2_1/",
+        rec_file_name="all_dir_sub/all_dir_sub2/some-chapter/",
         rec_header_name="alldir-header-all_dir_sub2-aex",
         to_exclude=[("all_dir_sub/all_dir_sub2/*.md", None)],
-    )
-
-    assert not ExcludeSearch.is_excluded_record(
-        rec_file_name="chapter_exclude_all/",
-        rec_header_name=None,
-        to_exclude=[("chapter_exclude_all.md", "something")],
     )
 
 
