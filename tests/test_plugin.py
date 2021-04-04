@@ -222,14 +222,6 @@ def test_is_excluded_record():
     )
 
 
-def test_is_excluded_record_ignores_partial_filename_matches():
-    assert not ExcludeSearch.is_excluded_record(
-        rec_file_name="do_not_match_chapter_exclude_all/",
-        rec_header_name=None,
-        to_exclude=[("chapter_exclude_all.md", None)],
-    )
-
-
 def test_select_records():
     _location_ = Path(__file__).resolve().parent
     with open(_location_.joinpath("mock_data/mock_search_index.json"), "r") as f:
