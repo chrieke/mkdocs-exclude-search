@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 import logging
-from typing import List, Dict, Tuple, Union
+from typing import List, Dict, Tuple, Union, Any
 from fnmatch import fnmatch
 
 from mkdocs.config import config_options
@@ -56,7 +56,7 @@ class ExcludeSearch(BasePlugin):
     @staticmethod
     def resolve_excluded_records(
         to_exclude: List[str],
-    ) -> List[Tuple[str, Union[str, None]]]:
+    ) -> List:
         """
         Resolve the search index file-name and header-names from the user provided excluded entries.
 
@@ -118,7 +118,7 @@ class ExcludeSearch(BasePlugin):
     @staticmethod
     def is_ignored_record(
         rec_file_name: str, rec_header_name: Union[str, None], to_ignore: List[Tuple]
-    ) -> Union[bool, None]:
+    ):
         """
         Headers selected by the user as to be ignored from the exclusions.
 
@@ -144,7 +144,7 @@ class ExcludeSearch(BasePlugin):
     @staticmethod
     def is_excluded_record(
         rec_file_name: str, rec_header_name: Union[str, None], to_exclude: List[Tuple]
-    ) -> Union[bool, None]:
+    ):
         """
         Files, headers or directories selected by the user to be excluded.
 
@@ -170,8 +170,8 @@ class ExcludeSearch(BasePlugin):
     def select_included_records(
         self,
         search_index: Dict,
-        to_exclude: List[Union[Tuple[str, None], Tuple[str, str]]],
-        to_ignore: List[Union[Tuple[str, None], Tuple[str, str]]],
+        to_exclude: List[Tuple[Any, ...]],
+        to_ignore: List[Tuple[Any, ...]],
         exclude_tags: bool = False,
     ) -> List[Dict]:
         """
