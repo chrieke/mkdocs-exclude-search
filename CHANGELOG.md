@@ -15,6 +15,11 @@ pip show mkdocs-exclude-search
 ```
 
 ## Versions
+### [0.4.0](https://pypi.org/project/mkdocs-exclude-search/) (2021-03-01)
+- Adds recursive exclusions of directories and child-directories by utilizing fnmatch, many thanks to @seppi91 #5 
+- All entries (files, headers, dirs) have to be provided as a list (each entry on a new row) in the plugin configuration, see the example in the readme.
+- Refactor and code improvements
+
 ### [0.3.1](https://pypi.org/project/mkdocs-exclude-search/) (2020-02-13)
 - Fix bug deactivating the addon when not configuring exclude_tags
 - Refactor, add tests
