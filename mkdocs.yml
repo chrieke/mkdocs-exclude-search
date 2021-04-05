@@ -22,8 +22,8 @@ plugins:
         - chapter_exclude_all.md
         - chapter_exclude_heading2.md#single-header-chapter_exclude_heading2-bbex # Always a single # for all header levels.
         - dir/dir_chapter_exclude_all.md
-        - dir_chapter_ignore_heading3.md
-        - all_dir/*.md
+        - dir/dir_chapter_ignore_heading3.md
+        - all_dir/*
         - all_dir_sub/all_dir_sub2/*
       ignore:
         - dir/dir_chapter_ignore_heading3.md#dir-single-header-dir_chapter_ignore_heading3-ccin

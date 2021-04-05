@@ -160,7 +160,7 @@ class ExcludeSearch(BasePlugin):
         """
         if any(
             (
-                fnmatch(rec_file_name, f"*{file_name.replace('.md', '')}?")
+                fnmatch(rec_file_name[:-1], f"{file_name.replace('.md', '')}")
                 and (rec_header_name == header_name or not header_name)
                 for (file_name, header_name) in to_exclude
             )
