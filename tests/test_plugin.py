@@ -196,8 +196,9 @@ def test_is_not_excluded_record():
         rec_header_name=None,
         to_exclude=[("chapter_exclude_all.md", None)],
     )
+    # partial path match
     assert not ExcludeSearch.is_excluded_record(
-        rec_file_name="do_not_match_chapter_exclude_all/",
+        rec_file_name="all_dir_sub/",
         rec_header_name=None,
         to_exclude=[("all_dir_sub/*/all_dir_sub2_1.md", None)],
     )
