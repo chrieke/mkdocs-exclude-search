@@ -16,6 +16,9 @@ pip show mkdocs-exclude-search
 
 ## Versions
 
+### [0.5.1](https://pypi.org/project/mkdocs-exclude-search/) (2021-04-19)
+- Require >= Python 3.6 for installing
+
 ### [0.5.0](https://pypi.org/project/mkdocs-exclude-search/) (2021-04-05)
 - **Breaking changes to specification of excluded and ignored files and directories**, see new examples in the readme.
 - Removed not explicitly set wildcard matching of filenames in directory.
