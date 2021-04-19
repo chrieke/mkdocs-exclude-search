@@ -15,7 +15,7 @@ setup(
     author="Christoph Rieke",
     author_email="christoph.k.rieke@gmail.com",
     license="MIT",
-    python_requires=">=2.7",
+    python_requires=">=3.6",
     install_requires=["mkdocs>=1.0.4"],
     classifiers=[
         "Development Status :: 4 - Beta",
