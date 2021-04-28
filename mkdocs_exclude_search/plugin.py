@@ -239,6 +239,12 @@ class ExcludeSearch(BasePlugin):
             exclude_tags=exclude_tags,
         )
 
+        logger.info(
+            f"mkdocs-exclude-search excluded {len(search_index['docs']) - len(included_records)}"
+            f" of {len(search_index['docs'])} search index records. Use `mkdocs serve -v` "
+            f"for more details."
+        )
+
         search_index["docs"] = included_records
         with open(search_index_fp, "w") as f:
             json.dump(search_index, f)
