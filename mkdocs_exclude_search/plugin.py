@@ -195,16 +195,16 @@ class ExcludeSearch(BasePlugin):
 
             # pylint: disable=no-else-continue
             if self.is_tag_record(rec_file_name) and exclude_tags:
-                logger.info(f"exclude-search (excludedTags): {record['location']}")
+                logger.debug(f"exclude-search (excludedTags): {record['location']}")
                 continue
             elif self.is_root_record(rec_file_name):
                 logger.debug(f"include-search (requiredRoot): {record['location']}")
                 included_records.append(record)
             elif self.is_ignored_record(rec_file_name, rec_header_name, to_ignore):
-                logger.info(f"include-search (ignoredRule): {record['location']}")
+                logger.debug(f"include-search (ignoredRule): {record['location']}")
                 included_records.append(record)
             elif self.is_excluded_record(rec_file_name, rec_header_name, to_exclude):
-                logger.info(f"exclude-search (excludedRule): {record['location']}")
+                logger.debug(f"exclude-search (excludedRule): {record['location']}")
                 continue
             else:
                 logger.debug(f"include-search (noRule): {record['location']}")
