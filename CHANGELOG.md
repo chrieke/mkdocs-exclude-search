@@ -16,6 +16,9 @@ pip show mkdocs-exclude-search
 
 ## Versions
 
+### [0.5.3](https://pypi.org/project/mkdocs-exclude-search/) (2021-11-28)
+- Avoid installing "tests" package with installation.
+
 ### [0.5.2](https://pypi.org/project/mkdocs-exclude-search/) (2021-04-28)
 - Reduced logger messages, verbose file exclusion log now available with `mkdocs serve -v`
 
