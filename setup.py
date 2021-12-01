@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="mkdocs-exclude-search",
-    version="0.5.3",
+    version="0.5.4",
     description="A mkdocs plugin that lets you exclude selected files or sections "
     "from the search index.",
     long_description=LONG_DESCRIPTION,

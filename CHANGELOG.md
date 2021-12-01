@@ -16,7 +16,7 @@ pip show mkdocs-exclude-search
 
 ## Versions
 
-### [0.5.3](https://pypi.org/project/mkdocs-exclude-search/) (2021-11-28)
+### [0.5.4](https://pypi.org/project/mkdocs-exclude-search/) (2021-12-01)
 - Avoid installing "tests" package with installation.
 
 ### [0.5.2](https://pypi.org/project/mkdocs-exclude-search/) (2021-04-28)
