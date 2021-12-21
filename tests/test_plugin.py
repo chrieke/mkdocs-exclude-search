@@ -31,6 +31,7 @@ def test_check_config(to_exclude, exclude_unreferenced, exclude_tags):
         {
             "plugins": ["search"],
             "to_exclude": to_exclude,
+            "exclude_unreferenced": exclude_unreferenced,
             "exclude_tags": exclude_tags,
         }
     )
