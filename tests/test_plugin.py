@@ -15,12 +15,27 @@ from .globals import (
 )
 
 
-def test_check_config():
-    ExcludeSearch.check_config(
-        config=CONFIG, to_exclude=TO_EXCLUDE, exclude_tags=EXCLUDE_TAGS
+@pytest.mark.parametrize(
+    "to_exclude,exclude_unreferenced,exclude_tags",
+    [
+        (TO_EXCLUDE, EXCLUDE_UNREFERENCED, EXCLUDE_TAGS),
+        (TO_EXCLUDE, True, True),
+        ([], True, EXCLUDE_TAGS),
+        ([], EXCLUDE_UNREFERENCED, True),
+        ([], True, True),
+    ],
+)
+def test_check_config(to_exclude, exclude_unreferenced, exclude_tags):
+    ex = ExcludeSearch()
+    ex.config = dict(
+        {
+            "plugins": ["search"],
+            "to_exclude": to_exclude,
+            "exclude_unreferenced": exclude_unreferenced,
+            "exclude_tags": exclude_tags,
+        }
     )
-    ExcludeSearch.check_config(config=CONFIG, to_exclude=TO_EXCLUDE, exclude_tags=True)
-    ExcludeSearch.check_config(config=CONFIG, to_exclude=[], exclude_tags=True)
+    ex.check_config()
 
 
 def test_check_config_raises_search_deactivated():

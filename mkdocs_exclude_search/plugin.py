@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 import logging
-from typing import List, Dict, Tuple, Union, Any
+from typing import List, Dict, Tuple, Union, Any, Optional
 from fnmatch import fnmatch
 
 from mkdocs.config import config_options
@@ -36,19 +36,22 @@ class ExcludeSearch(BasePlugin):
         self.enabled = True
         self.total_time = 0
 
-    @staticmethod
-    def check_config(config: dict, to_exclude: List[str], exclude_tags: bool):
+    def check_config(self):
         """
         Check plugin configuration.
         """
-        if not "search" in config["plugins"]:
+        if not "search" in self.config["plugins"]:
             message = (
                 "mkdocs-exclude-search plugin is activated but has no effect as "
                 "search plugin is deactivated!"
             )
             logger.debug(message)
             raise ValueError(message)
-        if not to_exclude and not exclude_tags:
+        if (
+            not self.config["to_exclude"]
+            and not self.config["exclude_unreferenced"]
+            and not self.config["exclude_tags"]
+        ):
             message = "No excluded search entries selected for mkdocs-exclude-search."
             logger.info(message)
             raise ValueError(message)
@@ -194,7 +197,7 @@ class ExcludeSearch(BasePlugin):
                 rec_file_name, rec_header_name = record["location"], None
 
             # pylint: disable=no-else-continue
-            if self.is_tag_record(rec_file_name) and exclude_tags:
+            if exclude_tags and self.is_tag_record(rec_file_name):
                 logger.debug(f"exclude-search (excludedTags): {record['location']}")
                 continue
             elif self.is_root_record(rec_file_name):
@@ -213,25 +216,18 @@ class ExcludeSearch(BasePlugin):
         return included_records
 
     def on_post_build(self, config):
-        to_exclude = self.config["exclude"]
-        exclude_tags = self.config["exclude_tags"]
-        to_ignore = self.config["ignore"]
-
         try:
-            self.check_config(
-                config=config, to_exclude=to_exclude, exclude_tags=exclude_tags
-            )
+            self.check_config(config=config)
         except ValueError:
             return config
-
-        to_exclude = self.resolve_excluded_records(to_exclude=to_exclude)
-        if to_ignore:
-            to_ignore = self.resolve_ignored_chapters(to_ignore=to_ignore)
 
         search_index_fp = Path(config.data["site_dir"]) / "search/search_index.json"
         with open(search_index_fp, "r") as f:
             search_index = json.load(f)
 
+        to_exclude = self.resolve_excluded_records(to_exclude=config["exclude"])
+        if config["ignore"]:
+            to_ignore = self.resolve_ignored_chapters(to_ignore=config["ignore"])
         included_records = self.select_included_records(
             search_index=search_index,
             to_exclude=to_exclude,
