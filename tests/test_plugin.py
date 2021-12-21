@@ -9,6 +9,7 @@ from .globals import (
     RESOLVED_EXCLUDED_RECORDS,
     TO_IGNORE,
     RESOLVED_IGNORED_CHAPTERS,
+    EXCLUDE_UNREFERENCED,
     EXCLUDE_TAGS,
     INCLUDED_RECORDS,
 )
@@ -30,7 +31,6 @@ def test_check_config(to_exclude, exclude_unreferenced, exclude_tags):
         {
             "plugins": ["search"],
             "to_exclude": to_exclude,
-            "exclude_unreferenced": exclude_unreferenced,
             "exclude_tags": exclude_tags,
         }
     )
