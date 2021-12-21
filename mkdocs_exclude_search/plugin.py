@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 import logging
-from typing import List, Dict, Tuple, Union, Any, Optional
+from typing import List, Dict, Tuple, Union, Any
 from fnmatch import fnmatch
 
 from mkdocs.config import config_options
@@ -217,7 +217,7 @@ class ExcludeSearch(BasePlugin):
 
     def on_post_build(self, config):
         try:
-            self.check_config(config=config)
+            self.check_config()
         except ValueError:
             return config
 
@@ -226,13 +226,15 @@ class ExcludeSearch(BasePlugin):
             search_index = json.load(f)
 
         to_exclude = self.resolve_excluded_records(to_exclude=config["exclude"])
+        to_ignore = None
         if config["ignore"]:
             to_ignore = self.resolve_ignored_chapters(to_ignore=config["ignore"])
+
         included_records = self.select_included_records(
             search_index=search_index,
             to_exclude=to_exclude,
             to_ignore=to_ignore,
-            exclude_tags=exclude_tags,
+            exclude_tags=config["exclude_tags"],
         )
 
         logger.info(
