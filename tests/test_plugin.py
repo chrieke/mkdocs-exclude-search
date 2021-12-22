@@ -16,7 +16,7 @@ from .globals import (
 
 
 @pytest.mark.parametrize(
-    "to_exclude,exclude_unreferenced,exclude_tags",
+    "exclude,exclude_unreferenced,exclude_tags",
     [
         (TO_EXCLUDE, EXCLUDE_UNREFERENCED, EXCLUDE_TAGS),
         (TO_EXCLUDE, True, True),
@@ -25,11 +25,11 @@ from .globals import (
         ([], True, True),
     ],
 )
-def test_check_config(to_exclude, exclude_unreferenced, exclude_tags):
+def test_check_config(exclude, exclude_unreferenced, exclude_tags):
     ex = ExcludeSearch()
     ex.config = dict(
         {
-            "to_exclude": to_exclude,
+            "exclude": exclude,
             "exclude_unreferenced": exclude_unreferenced,
             "exclude_tags": exclude_tags,
         }
@@ -47,7 +47,7 @@ def test_check_config_raises_no_exclusion():
     ex = ExcludeSearch()
     ex.config = dict(
         {
-            "to_exclude": [],
+            "exclude": [],
             "exclude_unreferenced": EXCLUDE_UNREFERENCED,
             "exclude_tags": EXCLUDE_TAGS,
         }

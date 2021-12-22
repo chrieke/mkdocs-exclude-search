@@ -49,7 +49,7 @@ class ExcludeSearch(BasePlugin):
             logger.debug(message)
             raise ValueError(message)
         if (
-            not self.config["to_exclude"]
+            not self.config["exclude"]
             and not self.config["exclude_unreferenced"]
             and not self.config["exclude_tags"]
         ):
