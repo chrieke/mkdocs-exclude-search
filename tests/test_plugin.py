@@ -249,6 +249,7 @@ def test_select_records():
         search_index=mock_search_index,
         to_exclude=RESOLVED_EXCLUDED_RECORDS,
         to_ignore=RESOLVED_IGNORED_CHAPTERS,
+        navigation_items=[],
         exclude_tags=EXCLUDE_TAGS,
     )
     assert isinstance(included_records, list)
@@ -265,8 +266,8 @@ def test_select_records_unreferenced():
         search_index=mock_search_index,
         to_exclude=[],
         to_ignore=[],
-        exclude_unreferenced=True,
         navigation_items=["chapter_exclude_all/"],
+        exclude_unreferenced=True,
     )
     assert isinstance(included_records, list)
     assert isinstance(included_records[0], dict)
@@ -283,6 +284,7 @@ def test_select_records_exclude_tags():
         search_index=mock_search_index,
         to_exclude=RESOLVED_EXCLUDED_RECORDS,
         to_ignore=RESOLVED_IGNORED_CHAPTERS,
+        navigation_items=[],
         exclude_tags=True,
     )
     assert len(included_records) != len(INCLUDED_RECORDS)

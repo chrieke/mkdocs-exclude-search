@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 import logging
-from typing import List, Dict, Tuple, Union, Any, Optional
+from typing import List, Dict, Tuple, Union, Any
 from fnmatch import fnmatch
 
 from mkdocs.config import config_options
@@ -107,14 +107,12 @@ class ExcludeSearch(BasePlugin):
         return ignored_chapters
 
     @staticmethod
-    def is_unreferenced_record(
-        rec_file_name: str, navigation_items: Optional[List[str]]
-    ):
-        """Tags entries of mkdocs-plugin-tags"""
-        if navigation_items is None:
-            return False
-        else:
-            return rec_file_name not in navigation_items
+    def is_unreferenced_record(rec_file_name: str, navigation_items: List[str]):
+        """
+        Unreferenced markdown files that are not contained in mkdocs.yml navigation
+        nav section.
+        """
+        return rec_file_name not in navigation_items
 
     @staticmethod
     def is_tag_record(rec_file_name: str):
@@ -187,8 +185,8 @@ class ExcludeSearch(BasePlugin):
         search_index: Dict,
         to_exclude: List[Tuple[Any, ...]],
         to_ignore: List[Tuple[Any, ...]],
+        navigation_items: List[str],
         exclude_unreferenced: bool = False,
-        navigation_items: Optional[List[str]] = None,
         exclude_tags: bool = False,
     ) -> List[Dict]:
         """
@@ -198,9 +196,10 @@ class ExcludeSearch(BasePlugin):
             search_index: The mkdocs search index in "config.data["site_dir"]) / "search/search_index.json"
             to_exclude: Resolved list of excluded search index records.
             to_ignore: Resolved list of ignored search index chapter records.
+            navigation_items: List of markdown filepaths in the mkdocs.yml nav, in the format
+                ["filename/", dir/filename/]
             exclude_unreferenced: Boolean wether unreferenced files (not listed in mkdocs nav)
                 should be excluded, default False.
-            navigation_items: List of markdown filepaths in the mkdocs.yml nav
             exclude_tags: Boolean wether mkdocs-plugin-tags entries should be excluded, default False.
 
         Returns:
@@ -254,19 +253,17 @@ class ExcludeSearch(BasePlugin):
         to_ignore = None
         if self.config["ignore"]:
             to_ignore = self.resolve_ignored_chapters(to_ignore=self.config["ignore"])
-        navigation_items = None
-        if self.config["exclude_unreferenced"]:
-            navigation_items = [
-                list(nav_chapter.values())[0].replace(".md", "/")
-                for nav_chapter in config.data["nav"]
-            ]
+        navigation_items = [
+            list(nav_chapter.values())[0].replace(".md", "/")
+            for nav_chapter in config.data["nav"]
+        ]
 
         included_records = self.select_included_records(
             search_index=search_index,
             to_exclude=to_exclude,
             to_ignore=to_ignore,
-            exclude_unreferenced=self.config["exclude_unreferenced"],
             navigation_items=navigation_items,
+            exclude_unreferenced=self.config["exclude_unreferenced"],
             exclude_tags=self.config["exclude_tags"],
         )
 
