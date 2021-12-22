@@ -9,7 +9,6 @@ from .globals import (
     RESOLVED_EXCLUDED_RECORDS,
     TO_IGNORE,
     RESOLVED_IGNORED_CHAPTERS,
-    NAVIGATION,
     EXCLUDE_UNREFERENCED,
     EXCLUDE_TAGS,
     INCLUDED_RECORDS,
@@ -55,11 +54,6 @@ def test_check_config_raises_no_exclusion():
     )
     with pytest.raises(ValueError):
         ex.check_config(plugins=["search"])
-
-
-def test_explode_navigation():
-    exploded_navigation = ExcludeSearch.explode_navigation(navigation=NAVIGATION)
-    assert len(exploded_navigation)
 
 
 def test_resolve_excluded_records():

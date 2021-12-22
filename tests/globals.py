@@ -40,7 +40,6 @@ EXCLUDE_TAGS = False
 NAVIGATION = [
     {"index": "index.md"},
     {"chapter_exclude_all": "chapter_exclude_all.md"},
-    {"all_dir": "all_dir/all_dir.md"},
     {
         "toplvl_chapter": [
             "toplvl_chapter/file_in_toplvl_chapter.md",
