@@ -5,38 +5,65 @@ import pytest
 
 from .context import ExcludeSearch
 from .globals import (
-    CONFIG,
     TO_EXCLUDE,
     RESOLVED_EXCLUDED_RECORDS,
     TO_IGNORE,
     RESOLVED_IGNORED_CHAPTERS,
+    EXCLUDE_UNREFERENCED,
     EXCLUDE_TAGS,
     INCLUDED_RECORDS,
 )
 
 
-def test_check_config():
-    ExcludeSearch.check_config(
-        config=CONFIG, to_exclude=TO_EXCLUDE, exclude_tags=EXCLUDE_TAGS
+@pytest.mark.parametrize(
+    "to_exclude,exclude_unreferenced,exclude_tags",
+    [
+        (TO_EXCLUDE, EXCLUDE_UNREFERENCED, EXCLUDE_TAGS),
+        (TO_EXCLUDE, True, True),
+        ([], True, EXCLUDE_TAGS),
+        ([], EXCLUDE_UNREFERENCED, True),
+        ([], True, True),
+    ],
+)
+def test_check_config(to_exclude, exclude_unreferenced, exclude_tags):
+    ex = ExcludeSearch()
+    ex.config = dict(
+        {
+            "plugins": ["search"],
+            "to_exclude": to_exclude,
+            "exclude_unreferenced": exclude_unreferenced,
+            "exclude_tags": exclude_tags,
+        }
     )
-    ExcludeSearch.check_config(config=CONFIG, to_exclude=TO_EXCLUDE, exclude_tags=True)
-    ExcludeSearch.check_config(config=CONFIG, to_exclude=[], exclude_tags=True)
+    ex.check_config()
 
 
 def test_check_config_raises_search_deactivated():
+    ex = ExcludeSearch()
+    ex.config = dict(
+        {
+            "plugins": ["abc"],
+            "to_exclude": TO_EXCLUDE,
+            "exclude_unreferenced": EXCLUDE_UNREFERENCED,
+            "exclude_tags": EXCLUDE_TAGS,
+        }
+    )
     with pytest.raises(ValueError):
-        ExcludeSearch.check_config(
-            config={"plugins": ["abc"]},
-            to_exclude=TO_EXCLUDE,
-            exclude_tags=EXCLUDE_TAGS,
-        )
+        ex.check_config()
 
 
 def test_check_config_raises_no_exclusion():
+    ex = ExcludeSearch()
+    ex.config = dict(
+        {
+            "plugins": ["search"],
+            "to_exclude": [],
+            "exclude_unreferenced": EXCLUDE_UNREFERENCED,
+            "exclude_tags": EXCLUDE_TAGS,
+        }
+    )
     with pytest.raises(ValueError):
-        ExcludeSearch.check_config(
-            config=CONFIG, to_exclude=[], exclude_tags=EXCLUDE_TAGS
-        )
+        ex.check_config()
 
 
 def test_resolve_excluded_records():
@@ -101,7 +128,7 @@ def test_is_not_ignored_record():
     )
 
 
-def test_is_excluded_record():
+def test_is_excluded_record_file():
     # file
     assert ExcludeSearch.is_excluded_record(
         rec_file_name="chapter_exclude_all/",
@@ -132,6 +159,9 @@ def test_is_excluded_record():
         rec_header_name=None,
         to_exclude=[("dir/dir_chapter_exclude_all.md", None)],
     )
+
+
+def test_is_excluded_record_dir():
     # all dir
     assert ExcludeSearch.is_excluded_record(
         rec_file_name="all_dir/some-chapter/",
@@ -161,6 +191,9 @@ def test_is_excluded_record():
         rec_header_name="alldir-header-all_dir_sub2-aex",
         to_exclude=[("all_dir_sub/all_dir_sub2/*", None)],
     )
+
+
+def test_is_excluded_record_wildcard():
     # file within subdir wildcard
     assert ExcludeSearch.is_excluded_record(
         rec_file_name="all_dir_sub/all_dir_sub2/all_dir_sub2_1/",

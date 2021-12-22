@@ -24,7 +24,7 @@ plugins:
 
 More information about plugins in the [MkDocs documentation][mkdocs-plugins].
 
-## Config
+## Configuration
 
 - List the markdown files to be excluded under `exclude` using the format `<path>/<to>/filename.md` in the docs folder.
 - Exclude specific heading subsections using the format `<path>/<to>/filename.md#some-heading`. Chapter names are all lowercase, `-` as separator, no spaces.

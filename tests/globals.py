@@ -1,4 +1,3 @@
-CONFIG = {"plugins": ["search"]}
 TO_EXCLUDE = [
     "chapter_exclude_all.md",
     "chapter_exclude_heading2.md#single-header-chapter_exclude_heading2-bbex",
@@ -35,6 +34,7 @@ RESOLVED_IGNORED_CHAPTERS = [
     ("all_dir/all_dir_ignore_heading1.md", None),
 ]
 
+EXCLUDE_UNREFERENCED = False
 EXCLUDE_TAGS = False
 
 INCLUDED_RECORDS = [
