@@ -124,7 +124,10 @@ class ExcludeSearch(BasePlugin):
 
     @staticmethod
     def is_root_record(rec_file_name: str):
-        """Required mkdocs root files"""
+        """Required mkdocs root files.
+
+        Collides with is_tag_record as these have no slash. Handled by order in select_included_records.
+        """
         return "/" not in rec_file_name
 
     @staticmethod
@@ -214,6 +217,9 @@ class ExcludeSearch(BasePlugin):
             if exclude_tags and self.is_tag_record(rec_file_name):
                 logger.debug(f"exclude-search (excludedTags): {record['location']}")
                 continue
+            elif self.is_root_record(rec_file_name):
+                logger.debug(f"include-search (requiredRoot): {record['location']}")
+                included_records.append(record)
             elif exclude_unreferenced and self.is_unreferenced_record(
                 rec_file_name=rec_file_name, navigation_items=navigation_items
             ):
@@ -221,9 +227,6 @@ class ExcludeSearch(BasePlugin):
                     f"exclude-search (excludedUnreferenced): {record['location']}"
                 )
                 continue
-            elif self.is_root_record(rec_file_name):
-                logger.debug(f"include-search (requiredRoot): {record['location']}")
-                included_records.append(record)
             elif self.is_ignored_record(rec_file_name, rec_header_name, to_ignore):
                 logger.debug(f"include-search (ignoredRule): {record['location']}")
                 included_records.append(record)
