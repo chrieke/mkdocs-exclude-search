@@ -206,6 +206,19 @@ def test_is_excluded_record_wildcard():
     )
 
 
+def test_is_unreferenced_record_unreferenced():
+    # unreferenced file, not listed in mkdocs.yml nav
+    assert ExcludeSearch.is_unreferenced_record(
+        rec_file_name="unreferenced/",
+        navigation_items=["index/", "chapter_exclude_all/"],
+    )
+
+    assert not ExcludeSearch.is_unreferenced_record(
+        rec_file_name="chapter_exclude_all/",
+        navigation_items=["index/", "chapter_exclude_all/"],
+    )
+
+
 def test_is_not_excluded_record():
     # file in dir without dir specified
     assert not ExcludeSearch.is_excluded_record(
@@ -241,6 +254,24 @@ def test_select_records():
     assert isinstance(included_records, list)
     assert isinstance(included_records[0], dict)
     assert included_records == INCLUDED_RECORDS
+
+
+def test_select_records_unreferenced():
+    _location_ = Path(__file__).resolve().parent
+    with open(_location_.joinpath("mock_data/mock_search_index.json"), "r") as f:
+        mock_search_index = json.load(f)
+
+    included_records = ExcludeSearch().select_included_records(
+        search_index=mock_search_index,
+        to_exclude=[],
+        to_ignore=[],
+        exclude_unreferenced=True,
+        navigation_items=["chapter_exclude_all/"],
+    )
+    assert isinstance(included_records, list)
+    assert isinstance(included_records[0], dict)
+    assert included_records != INCLUDED_RECORDS
+    assert len(included_records) == 10
 
 
 def test_select_records_exclude_tags():
