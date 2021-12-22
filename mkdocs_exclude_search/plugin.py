@@ -114,7 +114,7 @@ class ExcludeSearch(BasePlugin):
         if navigation_items is None:
             return False
         else:
-            return rec_file_name in navigation_items
+            return rec_file_name not in navigation_items
 
     @staticmethod
     def is_tag_record(rec_file_name: str):
@@ -250,23 +250,24 @@ class ExcludeSearch(BasePlugin):
         with open(search_index_fp, "r") as f:
             search_index = json.load(f)
 
-        to_exclude = self.resolve_excluded_records(to_exclude=config["exclude"])
+        to_exclude = self.resolve_excluded_records(to_exclude=self.config["exclude"])
         to_ignore = None
-        if config["ignore"]:
-            to_ignore = self.resolve_ignored_chapters(to_ignore=config["ignore"])
+        if self.config["ignore"]:
+            to_ignore = self.resolve_ignored_chapters(to_ignore=self.config["ignore"])
         navigation_items = None
-        if config["exclude_unreferenced"]:
+        if self.config["exclude_unreferenced"]:
             navigation_items = [
-                list(nav_chapter.values())[0] for nav_chapter in config.data["nav"]
+                list(nav_chapter.values())[0].replace(".md", "/")
+                for nav_chapter in config.data["nav"]
             ]
 
         included_records = self.select_included_records(
             search_index=search_index,
             to_exclude=to_exclude,
             to_ignore=to_ignore,
-            exclude_unreferenced=config["exclude_unreferenced"],
+            exclude_unreferenced=self.config["exclude_unreferenced"],
             navigation_items=navigation_items,
-            exclude_tags=config["exclude_tags"],
+            exclude_tags=self.config["exclude_tags"],
         )
 
         logger.info(
