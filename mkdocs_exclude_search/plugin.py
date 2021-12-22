@@ -8,6 +8,8 @@ from mkdocs.config import config_options
 from mkdocs.plugins import BasePlugin
 from mkdocs.utils import warning_filter
 
+from utils import explode_navigation
+
 
 def get_logger():
     """
@@ -56,31 +58,6 @@ class ExcludeSearch(BasePlugin):
             message = "No excluded search entries selected for mkdocs-exclude-search."
             logger.info(message)
             raise ValueError(message)
-
-    @staticmethod
-    def explode_navigation(navigation: List[dict]) -> List[str]:
-        """
-        Explode the mkdocs.yml navigation items.
-        Args:
-            navigation:
-
-        Returns:
-
-        """
-        navigation_paths = []
-        # for nav_item in navigation:
-        #     chapters = list(nav_item.values())
-        #     while chapters > 1:
-        #
-        #     else:
-        #         navigation_paths.append(chapters[0])
-        #
-        # navigation_items = [
-        #     list(nav_chapter.values())[0].replace(".md", "/")
-        #     for nav_chapter in
-        #
-
-        return navigation_paths
 
     @staticmethod
     def resolve_excluded_records(
@@ -279,7 +256,7 @@ class ExcludeSearch(BasePlugin):
         if self.config["ignore"]:
             to_ignore = self.resolve_ignored_chapters(to_ignore=self.config["ignore"])
 
-        navigation_items = self.explode_navigation(navigation=config.data["nav"])
+        navigation_items = explode_navigation(navigation=config.data["nav"])
 
         included_records = self.select_included_records(
             search_index=search_index,
