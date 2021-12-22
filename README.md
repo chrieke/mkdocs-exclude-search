@@ -44,6 +44,7 @@ plugins:
         - /*/fifth.md
       ignore:
         - dir/second.md#some-heading
+      exclude-unreferenced: true
 
 ```
 ```yaml
