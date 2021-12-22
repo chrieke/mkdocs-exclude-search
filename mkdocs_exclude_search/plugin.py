@@ -8,11 +8,10 @@ from mkdocs.config import config_options
 from mkdocs.plugins import BasePlugin
 from mkdocs.utils import warning_filter
 
+from mkdocs_exclude_search.utils import explode_navigation
+
 
 def get_logger():
-    """
-    Return a pre-configured logger.
-    """
     logger = logging.getLogger("mkdocs.plugins.mkdocs-exclude-search")
     logger.addFilter(warning_filter)
     return logger
@@ -23,7 +22,7 @@ logger = get_logger()
 
 class ExcludeSearch(BasePlugin):
     """
-    Excludes selected nav chapters from the search index.
+    Excludes selected files, nav chapters and headers from the search index.
     """
 
     config_scheme = (
@@ -253,10 +252,8 @@ class ExcludeSearch(BasePlugin):
         to_ignore = None
         if self.config["ignore"]:
             to_ignore = self.resolve_ignored_chapters(to_ignore=self.config["ignore"])
-        navigation_items = [
-            list(nav_chapter.values())[0].replace(".md", "/")
-            for nav_chapter in config.data["nav"]
-        ]
+
+        navigation_items = explode_navigation(navigation=config.data["nav"])
 
         included_records = self.select_included_records(
             search_index=search_index,

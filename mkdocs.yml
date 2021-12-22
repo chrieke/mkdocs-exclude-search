@@ -9,6 +9,11 @@ nav:
     - all_dir: all_dir/all_dir.md
     - all_dir_ignore_heading1: all_dir/all_dir_ignore_heading1.md
     - all_dir_sub2: all_dir_sub/all_dir_sub2/all_dir_sub2_1.md
+    - toplvl_chapter:
+        - toplvl_chapter/file_in_toplvl_chapter.md
+        - sub_chapter:
+            - toplvl_chapter/sub_chapter/file1_in_sub_chapter.md
+            - toplvl_chapter/sub_chapter/file2_in_sub_chapter.md
 
 theme:
   name: material
