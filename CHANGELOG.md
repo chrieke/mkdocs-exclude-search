@@ -16,6 +16,10 @@ pip show mkdocs-exclude-search
 
 ## Versions
 
+### [0.6.0](https://pypi.org/project/mkdocs-exclude-search/) (2021-12-22)
+- Add `exclude_unreferenced` option to exclude files that are not listed in the 
+  mkdocs.yml nav section.
+
 ### [0.5.4](https://pypi.org/project/mkdocs-exclude-search/) (2021-12-01)
 - Avoid installing "tests" package with installation.
 
