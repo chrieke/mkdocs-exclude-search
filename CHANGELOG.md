@@ -16,6 +16,9 @@ pip show mkdocs-exclude-search
 
 ## Versions
 
+### [0.6.1](https://pypi.org/project/mkdocs-exclude-search/) (2021-12-22)
+- Fixes issue in 0.6.0 when building with multiple subchapters in the navigation.
+  
 ### [0.6.0](https://pypi.org/project/mkdocs-exclude-search/) (2021-12-22)
 - Add `exclude_unreferenced` option to exclude files that are not listed in the 
   mkdocs.yml nav section.
