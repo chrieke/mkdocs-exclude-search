@@ -37,6 +37,23 @@ RESOLVED_IGNORED_CHAPTERS = [
 EXCLUDE_UNREFERENCED = False
 EXCLUDE_TAGS = False
 
+NAVIGATION = [
+    {"index": "index.md"},
+    {"chapter_exclude_all": "chapter_exclude_all.md"},
+    {"all_dir": "all_dir/all_dir.md"},
+    {
+        "toplvl_chapter": [
+            "toplvl_chapter/file_in_toplvl_chapter.md",
+            {
+                "sub_chapter": [
+                    "toplvl_chapter/sub_chapter/file1_in_sub_chapter.md",
+                    "toplvl_chapter/sub_chapter/file2_in_sub_chapter.md",
+                ]
+            },
+        ]
+    },
+]
+
 INCLUDED_RECORDS = [
     {"location": "", "text": "Index Hello, hello", "title": "index"},
     {"location": "#index", "text": "Hello, hello", "title": "Index"},
