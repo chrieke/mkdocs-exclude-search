@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 import logging
-from typing import List, Dict, Tuple, Union, Any
+from typing import List, Dict, Tuple, Union, Any, Optional
 from fnmatch import fnmatch
 
 from mkdocs.config import config_options
@@ -29,6 +29,7 @@ class ExcludeSearch(BasePlugin):
     config_scheme = (
         ("exclude", config_options.Type((str, list), default=[])),
         ("ignore", config_options.Type((str, list), default=[])),
+        ("exclude_unreferenced", config_options.Type(bool, default=False)),
         ("exclude_tags", config_options.Type(bool, default=False)),
     )
 
@@ -106,17 +107,25 @@ class ExcludeSearch(BasePlugin):
         return ignored_chapters
 
     @staticmethod
+    def is_unreferenced_record(
+        rec_file_name: str, navigation_items: Optional[List[str]]
+    ):
+        """Tags entries of mkdocs-plugin-tags"""
+        if navigation_items is None:
+            return False
+        else:
+            return rec_file_name in navigation_items
+
+    @staticmethod
     def is_tag_record(rec_file_name: str):
         """Tags entries of mkdocs-plugin-tags"""
         # TODO: Surface in readme
-        if "tags.html" in rec_file_name:
-            return True
+        return "tags.html" in rec_file_name
 
     @staticmethod
     def is_root_record(rec_file_name: str):
         """Required mkdocs root files"""
-        if "/" not in rec_file_name:
-            return True
+        return "/" not in rec_file_name
 
     @staticmethod
     def is_ignored_record(
@@ -175,6 +184,8 @@ class ExcludeSearch(BasePlugin):
         search_index: Dict,
         to_exclude: List[Tuple[Any, ...]],
         to_ignore: List[Tuple[Any, ...]],
+        exclude_unreferenced: bool = False,
+        navigation_items: Optional[List[str]] = None,
         exclude_tags: bool = False,
     ) -> List[Dict]:
         """
@@ -184,7 +195,10 @@ class ExcludeSearch(BasePlugin):
             search_index: The mkdocs search index in "config.data["site_dir"]) / "search/search_index.json"
             to_exclude: Resolved list of excluded search index records.
             to_ignore: Resolved list of ignored search index chapter records.
-            exclude_tags: Boolean if mkdocs-plugin-tags entries should be excluded, default False.
+            exclude_unreferenced: Boolean wether unreferenced files (not listed in mkdocs nav)
+                should be excluded, default False.
+            navigation_items: List of markdown filepaths in the mkdocs.yml nav
+            exclude_tags: Boolean wether mkdocs-plugin-tags entries should be excluded, default False.
 
         Returns:
             A new search index as a list of dicts.
@@ -199,6 +213,13 @@ class ExcludeSearch(BasePlugin):
             # pylint: disable=no-else-continue
             if exclude_tags and self.is_tag_record(rec_file_name):
                 logger.debug(f"exclude-search (excludedTags): {record['location']}")
+                continue
+            elif exclude_unreferenced and self.is_unreferenced_record(
+                rec_file_name=rec_file_name, navigation_items=navigation_items
+            ):
+                logger.debug(
+                    f"exclude-search (excludedUnreferenced): {record['location']}"
+                )
                 continue
             elif self.is_root_record(rec_file_name):
                 logger.debug(f"include-search (requiredRoot): {record['location']}")
@@ -229,11 +250,18 @@ class ExcludeSearch(BasePlugin):
         to_ignore = None
         if config["ignore"]:
             to_ignore = self.resolve_ignored_chapters(to_ignore=config["ignore"])
+        navigation_items = None
+        if config["exclude_unreferenced"]:
+            navigation_items = [
+                list(nav_chapter.values())[0] for nav_chapter in config.data["nav"]
+            ]
 
         included_records = self.select_included_records(
             search_index=search_index,
             to_exclude=to_exclude,
             to_ignore=to_ignore,
+            exclude_unreferenced=config["exclude_unreferenced"],
+            navigation_items=navigation_items,
             exclude_tags=config["exclude_tags"],
         )
 
