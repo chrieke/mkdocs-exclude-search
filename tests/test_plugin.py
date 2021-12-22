@@ -16,7 +16,7 @@ from .globals import (
 
 
 @pytest.mark.parametrize(
-    "to_exclude,exclude_unreferenced,exclude_tags",
+    "exclude,exclude_unreferenced,exclude_tags",
     [
         (TO_EXCLUDE, EXCLUDE_UNREFERENCED, EXCLUDE_TAGS),
         (TO_EXCLUDE, True, True),
@@ -25,45 +25,35 @@ from .globals import (
         ([], True, True),
     ],
 )
-def test_check_config(to_exclude, exclude_unreferenced, exclude_tags):
+def test_check_config(exclude, exclude_unreferenced, exclude_tags):
     ex = ExcludeSearch()
     ex.config = dict(
         {
-            "plugins": ["search"],
-            "to_exclude": to_exclude,
+            "exclude": exclude,
             "exclude_unreferenced": exclude_unreferenced,
             "exclude_tags": exclude_tags,
         }
     )
-    ex.check_config()
+    ex.check_config(plugins=["search"])
 
 
 def test_check_config_raises_search_deactivated():
     ex = ExcludeSearch()
-    ex.config = dict(
-        {
-            "plugins": ["abc"],
-            "to_exclude": TO_EXCLUDE,
-            "exclude_unreferenced": EXCLUDE_UNREFERENCED,
-            "exclude_tags": EXCLUDE_TAGS,
-        }
-    )
     with pytest.raises(ValueError):
-        ex.check_config()
+        ex.check_config(plugins=["abc"])
 
 
 def test_check_config_raises_no_exclusion():
     ex = ExcludeSearch()
     ex.config = dict(
         {
-            "plugins": ["search"],
-            "to_exclude": [],
+            "exclude": [],
             "exclude_unreferenced": EXCLUDE_UNREFERENCED,
             "exclude_tags": EXCLUDE_TAGS,
         }
     )
     with pytest.raises(ValueError):
-        ex.check_config()
+        ex.check_config(plugins=["search"])
 
 
 def test_resolve_excluded_records():
@@ -216,6 +206,19 @@ def test_is_excluded_record_wildcard():
     )
 
 
+def test_is_unreferenced_record_unreferenced():
+    # unreferenced file, not listed in mkdocs.yml nav
+    assert ExcludeSearch.is_unreferenced_record(
+        rec_file_name="unreferenced/",
+        navigation_items=["index/", "chapter_exclude_all/"],
+    )
+
+    assert not ExcludeSearch.is_unreferenced_record(
+        rec_file_name="chapter_exclude_all/",
+        navigation_items=["index/", "chapter_exclude_all/"],
+    )
+
+
 def test_is_not_excluded_record():
     # file in dir without dir specified
     assert not ExcludeSearch.is_excluded_record(
@@ -246,11 +249,30 @@ def test_select_records():
         search_index=mock_search_index,
         to_exclude=RESOLVED_EXCLUDED_RECORDS,
         to_ignore=RESOLVED_IGNORED_CHAPTERS,
+        navigation_items=[],
         exclude_tags=EXCLUDE_TAGS,
     )
     assert isinstance(included_records, list)
     assert isinstance(included_records[0], dict)
     assert included_records == INCLUDED_RECORDS
+
+
+def test_select_records_unreferenced():
+    _location_ = Path(__file__).resolve().parent
+    with open(_location_.joinpath("mock_data/mock_search_index.json"), "r") as f:
+        mock_search_index = json.load(f)
+
+    included_records = ExcludeSearch().select_included_records(
+        search_index=mock_search_index,
+        to_exclude=[],
+        to_ignore=[],
+        navigation_items=["chapter_exclude_all/"],
+        exclude_unreferenced=True,
+    )
+    assert isinstance(included_records, list)
+    assert isinstance(included_records[0], dict)
+    assert included_records != INCLUDED_RECORDS
+    assert len(included_records) == 10
 
 
 def test_select_records_exclude_tags():
@@ -262,6 +284,7 @@ def test_select_records_exclude_tags():
         search_index=mock_search_index,
         to_exclude=RESOLVED_EXCLUDED_RECORDS,
         to_ignore=RESOLVED_IGNORED_CHAPTERS,
+        navigation_items=[],
         exclude_tags=True,
     )
     assert len(included_records) != len(INCLUDED_RECORDS)
