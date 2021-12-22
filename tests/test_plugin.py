@@ -29,41 +29,31 @@ def test_check_config(to_exclude, exclude_unreferenced, exclude_tags):
     ex = ExcludeSearch()
     ex.config = dict(
         {
-            "plugins": ["search"],
             "to_exclude": to_exclude,
             "exclude_unreferenced": exclude_unreferenced,
             "exclude_tags": exclude_tags,
         }
     )
-    ex.check_config()
+    ex.check_config(plugins=["search"])
 
 
 def test_check_config_raises_search_deactivated():
     ex = ExcludeSearch()
-    ex.config = dict(
-        {
-            "plugins": ["abc"],
-            "to_exclude": TO_EXCLUDE,
-            "exclude_unreferenced": EXCLUDE_UNREFERENCED,
-            "exclude_tags": EXCLUDE_TAGS,
-        }
-    )
     with pytest.raises(ValueError):
-        ex.check_config()
+        ex.check_config(plugins=["abc"])
 
 
 def test_check_config_raises_no_exclusion():
     ex = ExcludeSearch()
     ex.config = dict(
         {
-            "plugins": ["search"],
             "to_exclude": [],
             "exclude_unreferenced": EXCLUDE_UNREFERENCED,
             "exclude_tags": EXCLUDE_TAGS,
         }
     )
     with pytest.raises(ValueError):
-        ex.check_config()
+        ex.check_config(plugins=["search"])
 
 
 def test_resolve_excluded_records():
