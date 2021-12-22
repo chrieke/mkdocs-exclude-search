@@ -58,6 +58,31 @@ class ExcludeSearch(BasePlugin):
             raise ValueError(message)
 
     @staticmethod
+    def explode_navigation(navigation: List[dict]) -> List[str]:
+        """
+        Explode the mkdocs.yml navigation items.
+        Args:
+            navigation:
+
+        Returns:
+
+        """
+        navigation_paths = []
+        # for nav_item in navigation:
+        #     chapters = list(nav_item.values())
+        #     while chapters > 1:
+        #
+        #     else:
+        #         navigation_paths.append(chapters[0])
+        #
+        # navigation_items = [
+        #     list(nav_chapter.values())[0].replace(".md", "/")
+        #     for nav_chapter in
+        #
+
+        return navigation_paths
+
+    @staticmethod
     def resolve_excluded_records(
         to_exclude: List[str],
     ) -> List:
@@ -253,10 +278,8 @@ class ExcludeSearch(BasePlugin):
         to_ignore = None
         if self.config["ignore"]:
             to_ignore = self.resolve_ignored_chapters(to_ignore=self.config["ignore"])
-        navigation_items = [
-            list(nav_chapter.values())[0].replace(".md", "/")
-            for nav_chapter in config.data["nav"]
-        ]
+
+        navigation_items = self.explode_navigation(navigation=config.data["nav"])
 
         included_records = self.select_included_records(
             search_index=search_index,
