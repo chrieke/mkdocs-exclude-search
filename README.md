@@ -3,6 +3,7 @@
 A mkdocs plugin that lets you exclude selected files or sections from the search index.
 
 <p align="center">
+    <img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/mkdocs-exclude-search">
     <a href="https://pypi.org/project/mkdocs-exclude-search/" title="mkdocs-exclude-search on pypi"><img src="https://img.shields.io/pypi/v/mkdocs-exclude-search?color=brightgreen"></a>
     <img src="./coverage.svg">
 </p>
