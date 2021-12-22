@@ -31,6 +31,7 @@ More information about plugins in the [MkDocs documentation][mkdocs-plugins].
 - Exclude all markdown files within a directory (and its children) with `dirname/*`.
 - Exclude all markdown files with a specific name within all subdirectories with `dirname/*/filename.md` or `/*/filename.md`.    
 - To still include a subsection of an excluded file, list the subsection heading under `ignore` using the format `<path>/<to>/filename.md#some-heading`. 
+- To exclude all unreferenced files (markdown files not listed in mkdocs.yml nav section), use `exclude-unreferenced: true`. Default false.
 
 ```yaml
 plugins:
@@ -63,6 +64,7 @@ This example would exclude:
 - the `some-heading` section of the third chapter.
 - all markdown files within `dir2` (and its children directories).
 - all markdown files named `fifth.md` within all subdirectories.
+- all unreferenced files
 
 ## See Also
 
