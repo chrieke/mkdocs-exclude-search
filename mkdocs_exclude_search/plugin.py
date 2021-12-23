@@ -248,10 +248,12 @@ class ExcludeSearch(BasePlugin):
         with open(search_index_fp, "r") as f:
             search_index = json.load(f)
 
-        to_exclude = self.resolve_excluded_records(to_exclude=self.config["exclude"])
-        to_ignore = None
-        if self.config["ignore"]:
-            to_ignore = self.resolve_ignored_chapters(to_ignore=self.config["ignore"])
+        to_exclude = self.config["exclude"]
+        if to_exclude:
+            to_exclude = self.resolve_excluded_records(to_exclude=to_exclude)
+        to_ignore = self.config["ignore"]
+        if to_ignore:
+            to_ignore = self.resolve_ignored_chapters(to_ignore=to_ignore)
 
         navigation_items = explode_navigation(navigation=config.data["nav"])
 

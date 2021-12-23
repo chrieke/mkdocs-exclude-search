@@ -16,6 +16,9 @@ pip show mkdocs-exclude-search
 
 ## Versions
 
+### [0.6.2](https://pypi.org/project/mkdocs-exclude-search/) (2021-12-23)
+- Fixes issue in 0.6.1 when building with no ignored files defined.
+
 ### [0.6.1](https://pypi.org/project/mkdocs-exclude-search/) (2021-12-22)
 - Fixes issue in 0.6.0 when building with multiple subchapters in the navigation.
   
