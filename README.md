@@ -14,14 +14,13 @@ Install the plugin using pip:
 
 `pip install mkdocs-exclude-search`
 
-Activate the plugin in `mkdocs.yml`:
+Activate the `search` and `exclude-search` plugins in `mkdocs.yml`. `search` is required, otherwise `exclude-search` has no effect!
+
 ```yaml
 plugins:
   - search
   - exclude-search
 ```
-
-> **Note:** If you have no `plugins` entry in your config file yet, you'll likely also want to add the `search` plugin. MkDocs enables it by default if there is no `plugins` entry set, but now you have to enable it explicitly.
 
 More information about plugins in the [MkDocs documentation][mkdocs-plugins].
 
