@@ -57,6 +57,15 @@ class ExcludeSearch(BasePlugin):
             logger.info(message)
             raise ValueError(message)
 
+        try:
+            if self.config["ignore"]:
+                if not all("#" in x for x in self.config["ignore"]):
+                    message = "Ignored elements of mkdocs-exclude-search can only be headers (containing `#`)."
+                    logger.info(message)
+                    raise ValueError(message)
+        except KeyError:
+            pass
+
     @staticmethod
     def resolve_excluded_records(
         to_exclude: List[str],
