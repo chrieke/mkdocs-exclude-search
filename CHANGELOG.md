@@ -16,6 +16,11 @@ pip show mkdocs-exclude-search
 
 ## Versions
 
+### [0.6.3](https://pypi.org/project/mkdocs-exclude-search/) (2021-12-23)
+- Fixes issue in 0.6.2 when building with no navigation.
+- Providing non-header entries to `ignore` is now ignored instead of failing.
+- Extended tests and established testing pipeline on various `used-by` repos.
+
 ### [0.6.2](https://pypi.org/project/mkdocs-exclude-search/) (2021-12-23)
 - Fixes issue in 0.6.1 when building with no ignored files defined.
 
