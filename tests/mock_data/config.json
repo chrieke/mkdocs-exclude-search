@@ -1,0 +1,46 @@
+{
+  "config_file_path": "mkdocs.yml",
+  "site_name": "My Docs",
+  "nav": [
+    {
+      "index": "index.md"
+    },
+    {
+      "chapter_exclude_all": "chapter_exclude_all.md"
+    },
+    {
+      "chapter_exclude_heading2": "chapter_exclude_heading2.md"
+    },
+    {
+      "dir_chapter_exclude_all": "dir/dir_chapter_exclude_all.md"
+    },
+    {
+      "dir_chapter_ignore_heading3": "dir/dir_chapter_ignore_heading3.md"
+    },
+    {
+      "all_dir": "all_dir/all_dir.md"
+    },
+    {
+      "all_dir_ignore_heading1": "all_dir/all_dir_ignore_heading1.md"
+    },
+    {
+      "all_dir_sub2": "all_dir_sub/all_dir_sub2/all_dir_sub2_1.md"
+    },
+    {
+      "toplvl_chapter": [
+        "toplvl_chapter/file_in_toplvl_chapter.md",
+        {
+          "sub_chapter": [
+            "toplvl_chapter/sub_chapter/file1_in_sub_chapter.md",
+            "toplvl_chapter/sub_chapter/file2_in_sub_chapter.md"
+          ]
+        }
+      ]
+    }
+  ],
+  "pages": null,
+  "site_url": "http://127.0.0.1:8000/",
+  "site_description": null,
+  "site_author": null,
+  "theme": null,
+  "plugins": ["search"]}

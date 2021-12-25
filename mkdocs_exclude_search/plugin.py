@@ -255,7 +255,11 @@ class ExcludeSearch(BasePlugin):
         if to_ignore:
             to_ignore = self.resolve_ignored_chapters(to_ignore=to_ignore)
 
-        navigation_items = explode_navigation(navigation=config.data["nav"])
+        nav = config.data["nav"]
+        if nav is not None:
+            navigation_items = explode_navigation(navigation=nav)
+        else:
+            navigation_items = []
 
         included_records = self.select_included_records(
             search_index=search_index,

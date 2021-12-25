@@ -58,9 +58,9 @@ INCLUDED_RECORDS = [
     {"location": "#index", "text": "Hello, hello", "title": "Index"},
     {
         "location": "chapter_exclude_heading2/",
-        "text": "single chapter_exclude_heading2 Header Ain single header chapter_exclude_"
-        "heading2 AAin single text chapter_exclude_heading2 AAin single header "
-        "chapter_exclude_heading2 BBex single text chapter_exclude_heading2 BBex",
+        "text": "single chapter_exclude_heading2 Header Ain single header chapter_exclude_heading2 "
+        "AAin single text chapter_exclude_heading2 AAin single header chapter_exclude_heading2 "
+        "BBex single text chapter_exclude_heading2 BBex",
         "title": "chapter_exclude_heading2",
     },
     {
@@ -74,10 +74,31 @@ INCLUDED_RECORDS = [
         "title": "single header chapter_exclude_heading2 AAin",
     },
     {
+        "location": "unreferenced/",
+        "text": "unreferenced file heading1 Aex This is an example of an unreferenced file "
+        "Unreferenced file heading2 AAex Unreferenced file heading2 BBex",
+        "title": "unreferenced file heading1 Aex",
+    },
+    {
+        "location": "unreferenced/#unreferenced-file-heading1-aex",
+        "text": "This is an example of an unreferenced file",
+        "title": "unreferenced file heading1 Aex",
+    },
+    {
+        "location": "unreferenced/#unreferenced-file-heading2-aaex",
+        "text": "",
+        "title": "Unreferenced file heading2 AAex",
+    },
+    {
+        "location": "unreferenced/#unreferenced-file-heading2-bbex",
+        "text": "",
+        "title": "Unreferenced file heading2 BBex",
+    },
+    {
         "location": "all_dir/all_dir_ignore_heading1/",
-        "text": "alldir Header all_dir_ignore_heading1 Aex alldir header all_dir_ignore_"
-        "heading1 AAin alldir text all_dir_ignore_heading1 AAin alldir header "
-        "all_dir_ignore_heading1 BBex alldir text all_dir_ignore_heading1 BBex",
+        "text": "alldir Header all_dir_ignore_heading1 Aex alldir header all_dir_ignore_heading1 "
+        "AAin alldir text all_dir_ignore_heading1 AAin alldir header all_dir_ignore_heading1 "
+        "BBex alldir text all_dir_ignore_heading1 BBex",
         "title": "all_dir_ignore_heading1",
     },
     {
@@ -87,16 +108,55 @@ INCLUDED_RECORDS = [
     },
     {
         "location": "dir/dir_chapter_ignore_heading3/",
-        "text": "dir single Header dir_chapter_ignore_heading3 Aex dir single header "
-        "dir_chapter_ignore_heading3 AAex dir single text dir_chapter_ignore_heading3 "
-        "AAex dir single header dir_chapter_ignore_heading3 CCin dir single text "
-        "dir_chapter_ignore_heading3 CCin",
+        "text": "dir single Header dir_chapter_ignore_heading3 Aex dir single header dir_chapter_ignore_heading3 "
+        "AAex dir single text dir_chapter_ignore_heading3 AAex dir single header dir_chapter_ignore_heading3 "
+        "CCin dir single text dir_chapter_ignore_heading3 CCin",
         "title": "dir_chapter_ignore_heading3",
     },
     {
         "location": "dir/dir_chapter_ignore_heading3/#dir-single-header-dir_chapter_ignore_heading3-ccin",
         "text": "dir single text dir_chapter_ignore_heading3 CCin",
         "title": "dir single header dir_chapter_ignore_heading3 CCin",
+    },
+    {
+        "location": "toplvl_chapter/file_in_toplvl_chapter/",
+        "text": "Header file_in_toplvl_chapter text file_in_toplvl_chapter",
+        "title": "Header file_in_toplvl_chapter",
+    },
+    {
+        "location": "toplvl_chapter/file_in_toplvl_chapter/#header-file_in_toplvl_chapter",
+        "text": "text file_in_toplvl_chapter",
+        "title": "Header file_in_toplvl_chapter",
+    },
+    {
+        "location": "toplvl_chapter/sub_chapter/file1_in_sub_chapter/",
+        "text": "Header file1_in_sub_chapter text file1_in_sub_chapter",
+        "title": "Header file1_in_sub_chapter",
+    },
+    {
+        "location": "toplvl_chapter/sub_chapter/file1_in_sub_chapter/#header-file1_in_sub_chapter",
+        "text": "text file1_in_sub_chapter",
+        "title": "Header file1_in_sub_chapter",
+    },
+    {
+        "location": "toplvl_chapter/sub_chapter/file2_in_sub_chapter/",
+        "text": "Header file2_in_sub_chapter text file2_in_sub_chapter",
+        "title": "Header file2_in_sub_chapter",
+    },
+    {
+        "location": "toplvl_chapter/sub_chapter/file2_in_sub_chapter/#header-file2_in_sub_chapter",
+        "text": "text file2_in_sub_chapter",
+        "title": "Header file2_in_sub_chapter",
+    },
+    {
+        "location": "toplvl_chapter/sub_chapter/unreferenced_in_sub_chapter/",
+        "text": "Header unreferenced_in_sub_chapter text unreferenced_in_sub_chapter",
+        "title": "Header unreferenced_in_sub_chapter",
+    },
+    {
+        "location": "toplvl_chapter/sub_chapter/unreferenced_in_sub_chapter/#header-unreferenced_in_sub_chapter",
+        "text": "text unreferenced_in_sub_chapter",
+        "title": "Header unreferenced_in_sub_chapter",
     },
     {
         "location": "tags.html",

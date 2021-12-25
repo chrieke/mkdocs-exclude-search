@@ -1,3 +1,6 @@
+from typing import List
+
+
 def iterate_all_values(nested_dict: dict):
     """
     Returns an iterator that returns all values of a (nested) iterable of the form
@@ -19,7 +22,7 @@ def iterate_all_values(nested_dict: dict):
         yield nested_dict
 
 
-def explode_navigation(navigation: list):
+def explode_navigation(navigation: list) -> List[str]:
     # Paths to chapters in mkdocs.yml navigation section to compare
     # with unreferenced files.
     navigation_paths = []
