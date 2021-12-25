@@ -4,7 +4,7 @@ install:
 test:
 	rm -r .pytest_cache || true
 	black .
-	python -m pytest --pylint --pylint-rcfile=./pylintrc --mypy --mypy-ignore-missing-imports --cov=mkdocs_exclude_search/ --durations=3
+	python -m pytest --pylint --pylint-rcfile=./pylintrc --mypy --mypy-ignore-missing-imports --cov=mkdocs_exclude_search/ --durations=3 --ignore=./test-repos/
 	coverage-badge -f -o coverage.svg
 
 serve-python:

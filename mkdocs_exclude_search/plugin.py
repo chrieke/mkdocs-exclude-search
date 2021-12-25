@@ -234,7 +234,7 @@ class ExcludeSearch(BasePlugin):
                 logger.debug(f"exclude-search (excludedTags): {record['location']}")
                 continue
             elif self.is_root_record(rec_file_name):
-                logger.debug(f"include-search (requiredRoot): {record['location']}")
+                # logger.debug(f"include-search (requiredRoot): {record['location']}")
                 included_records.append(record)
             elif exclude_unreferenced and self.is_unreferenced_record(
                 rec_file_name=rec_file_name, navigation_items=navigation_items
@@ -250,7 +250,7 @@ class ExcludeSearch(BasePlugin):
                 logger.debug(f"exclude-search (excludedRule): {record['location']}")
                 continue
             else:
-                logger.debug(f"include-search (noRule): {record['location']}")
+                # logger.debug(f"include-search (noRule): {record['location']}")
                 included_records.append(record)
 
         return included_records
