@@ -303,15 +303,20 @@ def test_on_post_build():
 
     p1 = patch("builtins.open", mock_open())
     p2 = patch("json.load", side_effect=[MagicMock(mock_search_index)])
-    p3 = patch.object(ExcludeSearch, "select_included_records", return_value=["some_included_record"])
+    p3 = patch.object(
+        ExcludeSearch, "select_included_records", return_value=["some_included_record"]
+    )
     with p1:
         with p2:
             with p3 as mock_p3:
                 exs = ExcludeSearch()
-                exs.config["exclude"] = ['dir/dir_chapter_exclude_all.md']
+                exs.config["exclude"] = ["dir/dir_chapter_exclude_all.md"]
                 # defaults
-                exs.config["ignore"], exs.config["exclude_unreferenced"], exs.config[
-                    "exclude_tags"] = [], False, False
+                (
+                    exs.config["ignore"],
+                    exs.config["exclude_unreferenced"],
+                    exs.config["exclude_tags"],
+                ) = ([], False, False)
 
                 out_config = exs.on_post_build(config=config)
 
@@ -329,15 +334,20 @@ def test_on_post_build_no_nav():
 
     p1 = patch("builtins.open", mock_open())
     p2 = patch("json.load", side_effect=[MagicMock(mock_search_index)])
-    p3 = patch.object(ExcludeSearch, "select_included_records", return_value=["some_included_record"])
+    p3 = patch.object(
+        ExcludeSearch, "select_included_records", return_value=["some_included_record"]
+    )
     with p1:
         with p2:
             with p3 as mock_p3:
                 exs = ExcludeSearch()
-                exs.config["exclude"] = ['dir/dir_chapter_exclude_all.md']
+                exs.config["exclude"] = ["dir/dir_chapter_exclude_all.md"]
                 # defaults
-                exs.config["ignore"], exs.config["exclude_unreferenced"], exs.config[
-                    "exclude_tags"] = [], False, False
+                (
+                    exs.config["ignore"],
+                    exs.config["exclude_unreferenced"],
+                    exs.config["exclude_tags"],
+                ) = ([], False, False)
 
                 out_config = exs.on_post_build(config=config)
 
