@@ -47,6 +47,7 @@ class ExcludeSearch(BasePlugin):
             )
             logger.debug(message)
             raise ValueError(message)
+
         if (
             not self.config["exclude"]
             and not self.config["exclude_unreferenced"]

@@ -42,8 +42,12 @@ def test_check_config(exclude, exclude_unreferenced, exclude_tags):
 
 def test_check_config_raises_search_deactivated():
     ex = ExcludeSearch()
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as error:
         ex.check_config(plugins=["abc"])
+    assert (
+        str(error.value)
+        == "mkdocs-exclude-search plugin is activated but has no effect as search plugin is deactivated!"
+    )
 
 
 def test_check_config_raises_no_exclusion():
@@ -55,7 +59,12 @@ def test_check_config_raises_no_exclusion():
             "exclude_tags": EXCLUDE_TAGS,
         }
     )
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as error:
+        ex.check_config(plugins=["search"])
+    assert (
+        str(error.value)
+        == "No excluded search entries selected for mkdocs-exclude-search."
+    )
         ex.check_config(plugins=["search"])
 
 
