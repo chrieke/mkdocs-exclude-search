@@ -65,7 +65,24 @@ def test_check_config_raises_no_exclusion():
         str(error.value)
         == "No excluded search entries selected for mkdocs-exclude-search."
     )
+
+
+def test_check_config_raises_ignore_is_not_header():
+    ex = ExcludeSearch()
+    ex.config = dict(
+        {
+            "exclude": TO_EXCLUDE,
+            "ignore": ["not_a_header"],
+            "exclude_unreferenced": EXCLUDE_UNREFERENCED,
+            "exclude_tags": EXCLUDE_TAGS,
+        }
+    )
+    with pytest.raises(ValueError) as error:
         ex.check_config(plugins=["search"])
+    assert (
+        str(error.value)
+        == "Ignored elements of mkdocs-exclude-search can only be headers (containing `#`)."
+    )
 
 
 def test_resolve_excluded_records():
