@@ -1,8 +1,8 @@
 from pathlib import Path
 import json
+from unittest.mock import patch, mock_open, MagicMock
 
 import pytest
-from unittest.mock import patch, mock_open, MagicMock
 from mkdocs.config.base import Config, load_config
 
 from .context import ExcludeSearch
