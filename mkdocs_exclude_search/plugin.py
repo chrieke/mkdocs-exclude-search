@@ -36,9 +36,9 @@ class ExcludeSearch(BasePlugin):
         self.enabled = True
         self.total_time = 0
 
-    def check_config(self, plugins: List[str]):
+    def validate_config(self, plugins: List[str]):
         """
-        Check plugin configuration.
+        Validate mkdocs-exclude-search plugin configuration.
         """
         if not "search" in plugins:
             message = (
@@ -47,14 +47,32 @@ class ExcludeSearch(BasePlugin):
             )
             logger.debug(message)
             raise ValueError(message)
+
         if (
             not self.config["exclude"]
             and not self.config["exclude_unreferenced"]
             and not self.config["exclude_tags"]
         ):
-            message = "No excluded search entries selected for mkdocs-exclude-search."
+            message = (
+                "No excluded search entries selected for mkdocs-exclude-search, "
+                "the plugin has no effect!"
+            )
             logger.info(message)
             raise ValueError(message)
+
+        try:
+            if self.config["ignore"]:
+                invalid_ignored = [x for x in self.config["ignore"] if "#" not in x]
+                message = (
+                    f"mkdocs-exclude-search configuration for `ignore` can only be "
+                    f"headers (containing `#`), the following entries will be ignored: {invalid_ignored}"
+                )
+                logger.info(message)
+                self.config["ignore"] = [
+                    x for x in self.config["ignore"] if not x in invalid_ignored
+                ]
+        except KeyError:
+            pass
 
     @staticmethod
     def resolve_excluded_records(
@@ -240,7 +258,7 @@ class ExcludeSearch(BasePlugin):
     def on_post_build(self, config):
         # at mkdocs buildtime, self.config does not contain the same as config
         try:
-            self.check_config(plugins=config["plugins"])
+            self.validate_config(plugins=config["plugins"])
         except ValueError:
             return config
 

@@ -28,7 +28,7 @@ from .globals import (
         ([], True, True),
     ],
 )
-def test_check_config(exclude, exclude_unreferenced, exclude_tags):
+def test_validate_config(exclude, exclude_unreferenced, exclude_tags):
     ex = ExcludeSearch()
     ex.config = dict(
         {
@@ -37,16 +37,20 @@ def test_check_config(exclude, exclude_unreferenced, exclude_tags):
             "exclude_tags": exclude_tags,
         }
     )
-    ex.check_config(plugins=["search"])
+    ex.validate_config(plugins=["search"])
 
 
-def test_check_config_raises_search_deactivated():
+def test_validate_config_raises_search_deactivated():
     ex = ExcludeSearch()
-    with pytest.raises(ValueError):
-        ex.check_config(plugins=["abc"])
+    with pytest.raises(ValueError) as error:
+        ex.validate_config(plugins=["abc"])
+    assert (
+        str(error.value)
+        == "mkdocs-exclude-search plugin is activated but has no effect as search plugin is deactivated!"
+    )
 
 
-def test_check_config_raises_no_exclusion():
+def test_validate_config_raises_no_exclusion():
     ex = ExcludeSearch()
     ex.config = dict(
         {
@@ -55,8 +59,29 @@ def test_check_config_raises_no_exclusion():
             "exclude_tags": EXCLUDE_TAGS,
         }
     )
-    with pytest.raises(ValueError):
-        ex.check_config(plugins=["search"])
+    with pytest.raises(ValueError) as error:
+        ex.validate_config(plugins=["search"])
+    assert (
+        str(error.value)
+        == "No excluded search entries selected for mkdocs-exclude-search, "
+        "the plugin has no effect!"
+    )
+
+
+def test_validate_config_pops_ignore_is_not_header():
+    ex = ExcludeSearch()
+    ex.config = dict(
+        {
+            "exclude": TO_EXCLUDE,
+            "ignore": ["not_a_header.md", "dir/file.md#header"],
+            "exclude_unreferenced": EXCLUDE_UNREFERENCED,
+            "exclude_tags": EXCLUDE_TAGS,
+        }
+    )
+    ex.validate_config(plugins=["search"])
+    assert "not_a_header.md" not in ex.config["ignore"]
+    assert "dir/file.md#header" in ex.config["ignore"]
+    assert len(ex.config["ignore"]) == 1
 
 
 def test_resolve_excluded_records():
