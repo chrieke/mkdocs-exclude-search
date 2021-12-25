@@ -3,7 +3,8 @@ import json
 from unittest.mock import patch, mock_open, MagicMock
 
 import pytest
-from mkdocs.config.base import Config, load_config
+from mkdocs.config.base import Config
+from mkdocs.config.defaults import get_schema
 
 from .context import ExcludeSearch
 from .globals import (
@@ -299,7 +300,11 @@ def test_on_post_build():
     with open(_location_.joinpath("mock_data/mock_search_index.json"), "r") as f:
         mock_search_index = json.load(f)
 
-    config = load_config(config_file=str(_location_.parent / "mkdocs.yml"))
+    mkdocs_config_fp = str(_location_.parent / "mkdocs.yml")
+    with open(mkdocs_config_fp, "rb") as fd:
+        cfg = Config(schema=get_schema(), config_file_path=mkdocs_config_fp)
+        # load the config file
+        cfg.load_file(fd)
 
     p1 = patch("builtins.open", mock_open())
     p2 = patch("json.load", side_effect=[MagicMock(mock_search_index)])
@@ -318,7 +323,7 @@ def test_on_post_build():
                     exs.config["exclude_tags"],
                 ) = ([], False, False)
 
-                out_config = exs.on_post_build(config=config)
+                out_config = exs.on_post_build(config=cfg)
 
     assert isinstance(out_config, Config)
     assert mock_p3.call_count == 1
@@ -329,8 +334,12 @@ def test_on_post_build_no_nav():
     with open(_location_.joinpath("mock_data/mock_search_index.json"), "r") as f:
         mock_search_index = json.load(f)
 
-    config = load_config(config_file=str(_location_.parent / "mkdocs.yml"))
-    config.__dict__["data"]["nav"] = None
+    mkdocs_config_fp = str(_location_.parent / "mkdocs.yml")
+    with open(mkdocs_config_fp, "rb") as fd:
+        cfg = Config(schema=get_schema(), config_file_path=mkdocs_config_fp)
+        # load the config file
+        cfg.load_file(fd)
+    cfg.__dict__["data"]["nav"] = None
 
     p1 = patch("builtins.open", mock_open())
     p2 = patch("json.load", side_effect=[MagicMock(mock_search_index)])
@@ -349,7 +358,7 @@ def test_on_post_build_no_nav():
                     exs.config["exclude_tags"],
                 ) = ([], False, False)
 
-                out_config = exs.on_post_build(config=config)
+                out_config = exs.on_post_build(config=cfg)
 
     assert isinstance(out_config, Config)
     assert mock_p3.call_count == 1
