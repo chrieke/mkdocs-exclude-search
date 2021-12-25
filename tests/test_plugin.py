@@ -2,6 +2,8 @@ from pathlib import Path
 import json
 
 import pytest
+from unittest.mock import patch, mock_open, MagicMock
+from mkdocs.config.base import Config, load_config
 
 from .context import ExcludeSearch
 from .globals import (
@@ -290,12 +292,40 @@ def test_select_records_exclude_tags():
     assert len(included_records) != len(INCLUDED_RECORDS)
     for rec in included_records:
         assert not "tags.html" in rec["location"]
+
+
 def test_on_post_build():
     _location_ = Path(__file__).resolve().parent
     with open(_location_.joinpath("mock_data/mock_search_index.json"), "r") as f:
         mock_search_index = json.load(f)
 
     config = load_config(config_file=str(_location_.parent / "mkdocs.yml"))
+
+    p1 = patch("builtins.open", mock_open())
+    p2 = patch("json.load", side_effect=[MagicMock(mock_search_index)])
+    p3 = patch.object(ExcludeSearch, "select_included_records", return_value=["some_included_record"])
+    with p1:
+        with p2:
+            with p3 as mock_p3:
+                exs = ExcludeSearch()
+                exs.config["exclude"] = ['dir/dir_chapter_exclude_all.md']
+                # defaults
+                exs.config["ignore"], exs.config["exclude_unreferenced"], exs.config[
+                    "exclude_tags"] = [], False, False
+
+                out_config = exs.on_post_build(config=config)
+
+    assert isinstance(out_config, Config)
+    assert mock_p3.call_count == 1
+
+
+def test_on_post_build_no_nav():
+    _location_ = Path(__file__).resolve().parent
+    with open(_location_.joinpath("mock_data/mock_search_index.json"), "r") as f:
+        mock_search_index = json.load(f)
+
+    config = load_config(config_file=str(_location_.parent / "mkdocs.yml"))
+    config.__dict__["data"]["nav"] = None
 
     p1 = patch("builtins.open", mock_open())
     p2 = patch("json.load", side_effect=[MagicMock(mock_search_index)])
