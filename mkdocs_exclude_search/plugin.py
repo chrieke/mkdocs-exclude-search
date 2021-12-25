@@ -53,16 +53,24 @@ class ExcludeSearch(BasePlugin):
             and not self.config["exclude_unreferenced"]
             and not self.config["exclude_tags"]
         ):
-            message = "No excluded search entries selected for mkdocs-exclude-search."
+            message = (
+                "No excluded search entries selected for mkdocs-exclude-search, "
+                "the plugin has no effect!"
+            )
             logger.info(message)
             raise ValueError(message)
 
         try:
             if self.config["ignore"]:
-                if not all("#" in x for x in self.config["ignore"]):
-                    message = "Ignored elements of mkdocs-exclude-search can only be headers (containing `#`)."
-                    logger.info(message)
-                    raise ValueError(message)
+                invalid_ignored = [x for x in self.config["ignore"] if "#" not in x]
+                message = (
+                    f"mkdocs-exclude-search configuration for `ignore` can only be "
+                    f"headers (containing `#`), the following entries will be ignored: {invalid_ignored}"
+                )
+                logger.info(message)
+                self.config["ignore"] = [
+                    x for x in self.config["ignore"] if not x in invalid_ignored
+                ]
         except KeyError:
             pass
 

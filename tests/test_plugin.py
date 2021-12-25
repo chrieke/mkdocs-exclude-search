@@ -63,26 +63,25 @@ def test_validate_config_raises_no_exclusion():
         ex.validate_config(plugins=["search"])
     assert (
         str(error.value)
-        == "No excluded search entries selected for mkdocs-exclude-search."
+        == "No excluded search entries selected for mkdocs-exclude-search, "
+        "the plugin has no effect!"
     )
 
 
-def test_validate_config_raises_ignore_is_not_header():
+def test_validate_config_pops_ignore_is_not_header():
     ex = ExcludeSearch()
     ex.config = dict(
         {
             "exclude": TO_EXCLUDE,
-            "ignore": ["not_a_header"],
+            "ignore": ["not_a_header.md", "dir/file.md#header"],
             "exclude_unreferenced": EXCLUDE_UNREFERENCED,
             "exclude_tags": EXCLUDE_TAGS,
         }
     )
-    with pytest.raises(ValueError) as error:
-        ex.validate_config(plugins=["search"])
-    assert (
-        str(error.value)
-        == "Ignored elements of mkdocs-exclude-search can only be headers (containing `#`)."
-    )
+    ex.validate_config(plugins=["search"])
+    assert "not_a_header.md" not in ex.config["ignore"]
+    assert "dir/file.md#header" in ex.config["ignore"]
+    assert len(ex.config["ignore"]) == 1
 
 
 def test_resolve_excluded_records():
