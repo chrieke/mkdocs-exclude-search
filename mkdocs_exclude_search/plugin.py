@@ -36,9 +36,9 @@ class ExcludeSearch(BasePlugin):
         self.enabled = True
         self.total_time = 0
 
-    def check_config(self, plugins: List[str]):
+    def validate_config(self, plugins: List[str]):
         """
-        Check plugin configuration.
+        Validate mkdocs-exclude-search plugin configuration.
         """
         if not "search" in plugins:
             message = (
@@ -250,7 +250,7 @@ class ExcludeSearch(BasePlugin):
     def on_post_build(self, config):
         # at mkdocs buildtime, self.config does not contain the same as config
         try:
-            self.check_config(plugins=config["plugins"])
+            self.validate_config(plugins=config["plugins"])
         except ValueError:
             return config
 
