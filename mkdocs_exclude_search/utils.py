@@ -28,12 +28,19 @@ def explode_navigation(navigation: list) -> List[str]:
     navigation_paths = []
 
     for chapter in navigation:
-        chapter_paths = list(chapter.values())[0]
-        if isinstance(chapter_paths, str):
-            navigation_paths.append(chapter_paths)
-        elif isinstance(chapter_paths, list):
-            exploded_chapter_paths = iterate_all_values(nested_dict=chapter)
-            navigation_paths.extend(exploded_chapter_paths)
+        if isinstance(chapter, str):
+            # e.g. - index.md   (without name in nav)
+            navigation_paths.append(chapter)
+        elif isinstance(chapter, dict):
+            chapter_paths = list(chapter.values())[0]
+            if isinstance(chapter_paths, str):
+                # e.g. - chapter_exclude_all: chapter_exclude_all.md
+                navigation_paths.append(chapter_paths)
+            elif isinstance(chapter_paths, list):
+                # e.g. - toplvl_chapter:
+                #         - toplvl_chapter/file_in_toplvl_chapter.md
+                exploded_chapter_paths = iterate_all_values(nested_dict=chapter)
+                navigation_paths.extend(exploded_chapter_paths)
 
     navigation_paths = [nav_path.replace(".md", "/") for nav_path in navigation_paths]
 

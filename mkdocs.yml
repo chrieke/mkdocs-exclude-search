@@ -2,6 +2,7 @@ site_name: My Docs
 
 nav:
     - index: index.md
+    - without_nav_name.md
     - chapter_exclude_all: chapter_exclude_all.md
     - chapter_exclude_heading2: chapter_exclude_heading2.md
     - dir_chapter_exclude_all: dir/dir_chapter_exclude_all.md

@@ -16,6 +16,7 @@ def test_explode_navigation():
     assert isinstance(nav_paths, list)
     assert nav_paths == [
         "index/",
+        "without_nav_name/",
         "chapter_exclude_all/",
         "toplvl_chapter/file_in_toplvl_chapter/",
         "toplvl_chapter/sub_chapter/file1_in_sub_chapter/",

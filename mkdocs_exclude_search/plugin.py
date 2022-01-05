@@ -273,9 +273,8 @@ class ExcludeSearch(BasePlugin):
         if to_ignore:
             to_ignore = self.resolve_ignored_chapters(to_ignore=to_ignore)
 
-        nav = config.data["nav"]
-        if nav is not None:
-            navigation_items = explode_navigation(navigation=nav)
+        if self.config["exclude_unreferenced"] and config.data["nav"] is not None:
+            navigation_items = explode_navigation(navigation=config.data["nav"])
         else:
             navigation_items = []
 
