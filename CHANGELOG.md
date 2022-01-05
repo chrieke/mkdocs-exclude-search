@@ -16,6 +16,9 @@ pip show mkdocs-exclude-search
 
 ## Versions
 
+### [0.6.4](https://pypi.org/project/mkdocs-exclude-search/) (2022-01-05)
+- Fixes issue when mkdocs navigation is provided without chapter names.
+
 ### [0.6.3](https://pypi.org/project/mkdocs-exclude-search/) (2021-12-23)
 - Fixes issue in 0.6.2 when building with no navigation.
 - Providing non-header entries to `ignore` is now ignored instead of failing.
