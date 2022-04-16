@@ -131,7 +131,7 @@ dmypy.json
 # misc
 /aux
 
-# vscode
 .vscode/
+.idea/
 
 /test-repos
