@@ -2,6 +2,13 @@
 
 A mkdocs plugin that lets you exclude selected files or sections from the search index.
 
+If you only need to exclude a few pages or sections, mkdocs-material now introduced 
+[built-in search exclusion](https://squidfunk.github.io/mkdocs-material/setup/setting-up-site-search/#search-exclusion)! 
+The **mkdocs-exclude-search** plugin 
+[complements](https://squidfunk.github.io/mkdocs-material/blog/2021/09/26/excluding-content-from-search/#whats-new) 
+this with more configuration options (wildcard exclusions, ignoring excluded subsections). It also provides 
+search-exclusion functionality to regular mkdocs users.
+
 <p align="center">
     <img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/mkdocs-exclude-search">
     <a href="https://pypi.org/project/mkdocs-exclude-search/" title="mkdocs-exclude-search on pypi"><img src="https://img.shields.io/pypi/v/mkdocs-exclude-search?color=brightgreen"></a>
@@ -12,9 +19,12 @@ A mkdocs plugin that lets you exclude selected files or sections from the search
 
 Install the plugin using pip:
 
-`pip install mkdocs-exclude-search`
+```bash
+pip install mkdocs-exclude-search
+```
 
-Activate the `search` and `exclude-search` plugins in `mkdocs.yml`. `search` is required, otherwise `exclude-search` has no effect!
+**Activate the `search` and `exclude-search` plugins in `mkdocs.yml`**. `search` is required, otherwise 
+`exclude-search` has no effect!
 
 ```yaml
 plugins:
