@@ -11,7 +11,6 @@ def test_iterate_all_values():
 
 
 def test_explode_navigation():
-
     nav_paths = explode_navigation(navigation=NAVIGATION)
     assert isinstance(nav_paths, list)
     assert nav_paths == [
