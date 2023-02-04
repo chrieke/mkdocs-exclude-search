@@ -40,7 +40,7 @@ class ExcludeSearch(BasePlugin):
         """
         Validate mkdocs-exclude-search plugin configuration.
         """
-        if not "search" in plugins:
+        if not ("search" in plugins or "material/search" in plugins):
             message = (
                 "mkdocs-exclude-search plugin is activated but has no effect as "
                 "search plugin is deactivated!"
@@ -255,6 +255,7 @@ class ExcludeSearch(BasePlugin):
 
         return included_records
 
+    # pylint: disable=arguments-differ
     def on_post_build(self, config):
         # at mkdocs buildtime, self.config does not contain the same as config
         try:
