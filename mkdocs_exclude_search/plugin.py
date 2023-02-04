@@ -40,7 +40,7 @@ class ExcludeSearch(BasePlugin):
         """
         Validate mkdocs-exclude-search plugin configuration.
         """
-        if not "search" in plugins or "material/search" in plugins:
+        if not ("search" in plugins or "material/search" in plugins):
             message = (
                 "mkdocs-exclude-search plugin is activated but has no effect as "
                 "search plugin is deactivated!"
