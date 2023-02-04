@@ -255,6 +255,7 @@ class ExcludeSearch(BasePlugin):
 
         return included_records
 
+    # pylint: disable=arguments-differ
     def on_post_build(self, config):
         # at mkdocs buildtime, self.config does not contain the same as config
         try:
