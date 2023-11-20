@@ -16,6 +16,9 @@ pip show mkdocs-exclude-search
 
 ## Versions
 
+### [0.6.6](https://pypi.org/project/mkdocs-exclude-search/) (2023-11-20)
+- Prevents long mkdocs logger deprecation warning (#45).
+
 ### [0.6.5](https://pypi.org/project/mkdocs-exclude-search/) (2023-02-04)
 - Fixes issue of search-plugin not being recognized, mkdocs-material adjusted search namespace (#42).
 
