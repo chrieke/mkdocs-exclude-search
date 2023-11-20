@@ -1,19 +1,27 @@
 import json
 from pathlib import Path
-import logging
+
 from typing import List, Dict, Tuple, Union, Any
 from fnmatch import fnmatch
 
+import mkdocs
 from mkdocs.config import config_options
 from mkdocs.plugins import BasePlugin
-from mkdocs.utils import warning_filter
 
 from mkdocs_exclude_search.utils import explode_navigation
 
+from packaging.version import Version
+
+import logging
+logger = logging.getLogger("mkdocs.plugins.mkdocs-exclude-search")
+MKDOCS_LOG_VERSION = '1.2'
+if Version(mkdocs.__version__) < Version(MKDOCS_LOG_VERSION):
+    # filter doesn't do anything since that version
+    from mkdocs.utils import warning_filter
+    logger.addFilter(warning_filter)
+
 
 def get_logger():
-    logger = logging.getLogger("mkdocs.plugins.mkdocs-exclude-search")
-    logger.addFilter(warning_filter)
     return logger
 
 
