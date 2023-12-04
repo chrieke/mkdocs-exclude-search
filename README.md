@@ -1,6 +1,6 @@
 # mkdocs-exclude-search
 
-A mkdocs plugin that lets you exclude selected files or sections from the search index.
+A mkdocs plugin that excludes selected chapters from the docs search index.
 
 If you only need to exclude a few pages or sections, mkdocs-material now introduced 
 [built-in search exclusion](https://squidfunk.github.io/mkdocs-material/setup/setting-up-site-search/#search-exclusion)! 
