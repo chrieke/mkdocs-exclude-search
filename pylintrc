@@ -8,7 +8,6 @@ disable=
     too-few-public-methods,
     missing-final-newline,
     too-many-boolean-expressions,
-    bad-continuation,
     invalid-name,
     super-init-not-called,
     inconsistent-return-statements,
@@ -21,7 +20,7 @@ disable=
     duplicate-code,
     logging-fstring-interpolation,
     logging-format-interpolation,
-    unspecified-encoding
+    too-many-positional-arguments
 
 [FORMAT]
 max-line-length=120
