@@ -84,6 +84,36 @@ def test_validate_config_pops_ignore_is_not_header():
     assert len(ex.config["ignore"]) == 1
 
 
+def test_validate_config_normalizes_string_options():
+    # exclude/ignore accept a single string, which must not be iterated as characters
+    ex = ExcludeSearch()
+    ex.config = dict(
+        {
+            "exclude": "chapter_exclude_all.md",
+            "ignore": "dir/file.md#header",
+            "exclude_unreferenced": EXCLUDE_UNREFERENCED,
+            "exclude_tags": EXCLUDE_TAGS,
+        }
+    )
+    ex.validate_config(plugins=["search"])
+    assert ex.config["exclude"] == ["chapter_exclude_all.md"]
+    assert ex.config["ignore"] == ["dir/file.md#header"]
+
+
+def test_validate_config_keeps_valid_ignore():
+    ex = ExcludeSearch()
+    ex.config = dict(
+        {
+            "exclude": TO_EXCLUDE,
+            "ignore": TO_IGNORE,
+            "exclude_unreferenced": EXCLUDE_UNREFERENCED,
+            "exclude_tags": EXCLUDE_TAGS,
+        }
+    )
+    ex.validate_config(plugins=["search"])
+    assert ex.config["ignore"] == TO_IGNORE
+
+
 def test_resolve_excluded_records():
     resolved_excluded_records = ExcludeSearch.resolve_excluded_records(
         to_exclude=TO_EXCLUDE
@@ -102,14 +132,34 @@ def test_resolve_ignored_chapters():
     assert set(resolved_ignored_chapters) == set(RESOLVED_IGNORED_CHAPTERS)
 
 
+def test_resolve_records_header_containing_hash():
+    # only the first `#` separates file and header
+    assert ExcludeSearch.resolve_excluded_records(to_exclude=["a.md#header#sub"]) == [
+        ("a.md", "header#sub")
+    ]
+    assert set(
+        ExcludeSearch.resolve_ignored_chapters(to_ignore=["a.md#header#sub"])
+    ) == {("a.md", "header#sub"), ("a.md", None)}
+
+
 def test_is_tag_record():
+    # use_directory_urls: true (default)
+    assert ExcludeSearch.is_tag_record("tags/")
+    assert ExcludeSearch.is_tag_record("dir/tags/")
+    # use_directory_urls: false
     assert ExcludeSearch.is_tag_record("tags.html")
-    assert ExcludeSearch.is_tag_record("tags.html#abc")
+    assert ExcludeSearch.is_tag_record("dir/tags.html")
+    # no substring matches on other pages
+    assert not ExcludeSearch.is_tag_record("montags.html")
+    assert not ExcludeSearch.is_tag_record("tags_of_things/")
 
 
 def test_is_root_record():
     assert ExcludeSearch.is_root_record("")
     assert ExcludeSearch.is_root_record("index.html")
+    # with use_directory_urls: false, a root level chapter is not the index page
+    assert not ExcludeSearch.is_root_record("chapter_exclude_all.html")
+    assert not ExcludeSearch.is_root_record("chapter_exclude_all/")
 
 
 def test_is_ignored_record():
@@ -238,12 +288,12 @@ def test_is_unreferenced_record_unreferenced():
     # unreferenced file, not listed in mkdocs.yml nav
     assert ExcludeSearch.is_unreferenced_record(
         rec_file_name="unreferenced/",
-        navigation_items=["index/", "chapter_exclude_all/"],
+        navigation_items=["index", "chapter_exclude_all"],
     )
 
     assert not ExcludeSearch.is_unreferenced_record(
         rec_file_name="chapter_exclude_all/",
-        navigation_items=["index/", "chapter_exclude_all/"],
+        navigation_items=["index", "chapter_exclude_all"],
     )
 
 
@@ -268,9 +318,129 @@ def test_is_not_excluded_record():
     )
 
 
+def test_is_excluded_record_no_directory_urls():
+    # with use_directory_urls: false, records are located at `<path>/<name>.html`
+    assert ExcludeSearch.is_excluded_record(
+        rec_file_name="chapter_exclude_all.html",
+        rec_header_name=None,
+        to_exclude=[("chapter_exclude_all.md", None)],
+    )
+    assert ExcludeSearch.is_excluded_record(
+        rec_file_name="dir/dir_chapter_exclude_all.html",
+        rec_header_name="header-aex",
+        to_exclude=[("dir/dir_chapter_exclude_all.md", None)],
+    )
+    assert ExcludeSearch.is_excluded_record(
+        rec_file_name="all_dir/some-chapter.html",
+        rec_header_name=None,
+        to_exclude=[("all_dir/*", None)],
+    )
+    assert not ExcludeSearch.is_excluded_record(
+        rec_file_name="do_not_match_chapter_exclude_all.html",
+        rec_header_name=None,
+        to_exclude=[("chapter_exclude_all.md", None)],
+    )
+
+
+def test_is_ignored_record_no_directory_urls():
+    assert ExcludeSearch.is_ignored_record(
+        rec_file_name="all_dir/all_dir_ignore_heading1.html",
+        rec_header_name="alldir-header-all_dir_ignore_heading1-aain",
+        to_ignore=[
+            (
+                "all_dir/all_dir_ignore_heading1.md",
+                "alldir-header-all_dir_ignore_heading1-aain",
+            )
+        ],
+    )
+
+
+def test_is_unreferenced_record_no_directory_urls():
+    assert ExcludeSearch.is_unreferenced_record(
+        rec_file_name="unreferenced.html",
+        navigation_items=["index", "chapter_exclude_all"],
+    )
+    assert not ExcludeSearch.is_unreferenced_record(
+        rec_file_name="chapter_exclude_all.html",
+        navigation_items=["index", "chapter_exclude_all"],
+    )
+
+
+def test_select_records_no_directory_urls():
+    search_index = {
+        "docs": [
+            {"location": "index.html", "text": "index", "title": "index"},
+            {"location": "index.html#index", "text": "index", "title": "Index"},
+            {"location": "chapter_exclude_all.html", "text": "a", "title": "a"},
+            {"location": "chapter_exclude_all.html#aex", "text": "a", "title": "a"},
+            {"location": "dir/dir_chapter_keep.html", "text": "b", "title": "b"},
+            {"location": "unreferenced.html", "text": "c", "title": "c"},
+        ]
+    }
+
+    included_records = ExcludeSearch().select_included_records(
+        search_index=search_index,
+        to_exclude=[("chapter_exclude_all.md", None)],
+        to_ignore=[],
+        navigation_items=["index", "dir/dir_chapter_keep"],
+        exclude_unreferenced=True,
+    )
+    assert [rec["location"] for rec in included_records] == [
+        "index.html",
+        "index.html#index",
+        "dir/dir_chapter_keep.html",
+    ]
+
+
+def test_select_records_tags():
+    search_index = {
+        "docs": [
+            {"location": "tags.html", "text": "tags", "title": "Tags"},
+            {"location": "dir/tags.html", "text": "own page", "title": "own"},
+            {"location": "tags/", "text": "tags", "title": "Tags"},
+        ]
+    }
+
+    # tag pages are not part of the nav, the unreferenced rule must not drop them
+    included_records = ExcludeSearch().select_included_records(
+        search_index=search_index,
+        to_exclude=[],
+        to_ignore=[],
+        navigation_items=[],
+        exclude_unreferenced=True,
+    )
+    assert [rec["location"] for rec in included_records] == [
+        "tags.html",
+        "dir/tags.html",
+        "tags/",
+    ]
+
+    # an explicit exclusion still applies
+    included_records = ExcludeSearch().select_included_records(
+        search_index=search_index,
+        to_exclude=[("dir/tags.md", None)],
+        to_ignore=[],
+        navigation_items=[],
+        exclude_unreferenced=True,
+    )
+    assert [rec["location"] for rec in included_records] == ["tags.html", "tags/"]
+
+    # exclude_tags drops tag pages in both url styles
+    included_records = ExcludeSearch().select_included_records(
+        search_index=search_index,
+        to_exclude=[],
+        to_ignore=[],
+        navigation_items=[],
+        exclude_tags=True,
+    )
+    assert not included_records
+
+
 def test_select_records():
     _location_ = Path(__file__).resolve().parent
-    with open(_location_.joinpath("mock_data/mock_search_index.json"), "r") as f:
+    with open(
+        _location_.joinpath("mock_data/mock_search_index.json"), "r", encoding="utf-8"
+    ) as f:
         mock_search_index = json.load(f)
 
     included_records = ExcludeSearch().select_included_records(
@@ -287,14 +457,16 @@ def test_select_records():
 
 def test_select_records_unreferenced():
     _location_ = Path(__file__).resolve().parent
-    with open(_location_.joinpath("mock_data/mock_search_index.json"), "r") as f:
+    with open(
+        _location_.joinpath("mock_data/mock_search_index.json"), "r", encoding="utf-8"
+    ) as f:
         mock_search_index = json.load(f)
 
     included_records = ExcludeSearch().select_included_records(
         search_index=mock_search_index,
         to_exclude=[],
         to_ignore=[],
-        navigation_items=["chapter_exclude_all/"],
+        navigation_items=["chapter_exclude_all"],
         exclude_unreferenced=True,
     )
     assert isinstance(included_records, list)
@@ -305,7 +477,9 @@ def test_select_records_unreferenced():
 
 def test_select_records_exclude_tags():
     _location_ = Path(__file__).resolve().parent
-    with open(_location_.joinpath("mock_data/mock_search_index.json"), "r") as f:
+    with open(
+        _location_.joinpath("mock_data/mock_search_index.json"), "r", encoding="utf-8"
+    ) as f:
         mock_search_index = json.load(f)
 
     included_records = ExcludeSearch().select_included_records(
@@ -322,7 +496,9 @@ def test_select_records_exclude_tags():
 
 def test_on_post_build():
     _location_ = Path(__file__).resolve().parent
-    with open(_location_.joinpath("mock_data/mock_search_index.json"), "r") as f:
+    with open(
+        _location_.joinpath("mock_data/mock_search_index.json"), "r", encoding="utf-8"
+    ) as f:
         mock_search_index = json.load(f)
 
     mkdocs_config_fp = str(_location_.parent / "mkdocs.yml")
@@ -356,7 +532,9 @@ def test_on_post_build():
 
 def test_on_post_build_no_nav():
     _location_ = Path(__file__).resolve().parent
-    with open(_location_.joinpath("mock_data/mock_search_index.json"), "r") as f:
+    with open(
+        _location_.joinpath("mock_data/mock_search_index.json"), "r", encoding="utf-8"
+    ) as f:
         mock_search_index = json.load(f)
 
     mkdocs_config_fp = str(_location_.parent / "mkdocs.yml")
