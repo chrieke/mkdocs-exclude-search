@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mkdocs-exclude-search"
-version = "0.6.6"
+version = "0.6.7"
 description = "A mkdocs plugin that lets you exclude selected files or sections from the search index."
 readme = "README.md"
 license = "MIT"

@@ -16,7 +16,7 @@ pip show mkdocs-exclude-search
 
 ## Versions
 
-### Unreleased
+### [0.6.7](https://pypi.org/project/mkdocs-exclude-search/) (2026-08-09)
 - Fixes exclusions having no effect with `use_directory_urls: false`, the `.html` page urls
   did not match any exclude/ignore entry and root level pages were always kept.
 - Fixes `exclude`/`ignore` given as a single string being iterated character by character.
@@ -27,6 +27,7 @@ pip show mkdocs-exclude-search
   where the tags page is located at `tags/` instead of `tags.html`.
 - Fixes duplicated entries when resolving named subchapters of the mkdocs nav.
 - Fixes the `ignore` validation message being logged for valid configurations.
+- Tests on Python 3.9 to 3.14, requires Python >= 3.9.
 
 ### [0.6.6](https://pypi.org/project/mkdocs-exclude-search/) (2023-11-20)
 - Prevents long mkdocs logger deprecation warning (#45).
