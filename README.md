@@ -43,6 +43,9 @@ More information about plugins in the [MkDocs documentation][mkdocs-plugins].
 - To still include a subsection of an excluded file, list the subsection heading under `ignore` using the format `<path>/<to>/filename.md#some-heading`. 
 - To exclude all unreferenced files (markdown files not listed in mkdocs.yml nav section), use `exclude_unreferenced: true`. Default false.
 
+Works with both the default `use_directory_urls: true` and `use_directory_urls: false`. The site index page
+(`index.md`) is always kept in the search index.
+
 ```yaml
 plugins:
   - search
