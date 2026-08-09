@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from typing import Optional
 
 
 def iterate_all_values(nested_dict: dict):
@@ -18,7 +18,7 @@ def iterate_all_values(nested_dict: dict):
         yield nested_dict
 
 
-def split_header(entry: str) -> Tuple[str, Optional[str]]:
+def split_header(entry: str) -> tuple[str, Optional[str]]:
     """
     Split an entry or record location into file and header part, e.g.
     'dir/chapter.md#some-header' -> ('dir/chapter.md', 'some-header').
@@ -49,7 +49,7 @@ def strip_url_suffix(rec_file_name: str) -> str:
     return rec_file_name
 
 
-def explode_navigation(navigation: list) -> List[str]:
+def explode_navigation(navigation: list) -> list[str]:
     # Paths to chapters in mkdocs.yml navigation section to compare
     # with unreferenced files.
     navigation_paths = []
@@ -59,7 +59,7 @@ def explode_navigation(navigation: list) -> List[str]:
             # e.g. - index.md   (without name in nav)
             navigation_paths.append(chapter)
         elif isinstance(chapter, dict):
-            chapter_paths = list(chapter.values())[0]
+            chapter_paths = next(iter(chapter.values()))
             if isinstance(chapter_paths, str):
                 # e.g. - chapter_exclude_all: chapter_exclude_all.md
                 navigation_paths.append(chapter_paths)

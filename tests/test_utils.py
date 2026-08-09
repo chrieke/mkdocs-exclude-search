@@ -1,11 +1,11 @@
-from .globals import NAVIGATION
 from .context import (
-    iterate_all_values,
     explode_navigation,
+    iterate_all_values,
     split_header,
     strip_md_suffix,
     strip_url_suffix,
 )
+from .globals import NAVIGATION
 
 
 def test_iterate_all_values():

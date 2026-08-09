@@ -9,11 +9,10 @@ sys.path.insert(
     ),
 )
 
-# pylint: disable=wrong-import-position,unused-import
 from plugin import ExcludeSearch
 from utils import (
-    iterate_all_values,
     explode_navigation,
+    iterate_all_values,
     split_header,
     strip_md_suffix,
     strip_url_suffix,

@@ -1,6 +1,6 @@
-from pathlib import Path
 import json
-from unittest.mock import patch, mock_open, MagicMock
+from pathlib import Path
+from unittest.mock import MagicMock, mock_open, patch
 
 import pytest
 from mkdocs.config.base import Config
@@ -8,13 +8,13 @@ from mkdocs.config.defaults import get_schema
 
 from .context import ExcludeSearch
 from .globals import (
-    TO_EXCLUDE,
-    RESOLVED_EXCLUDED_RECORDS,
-    TO_IGNORE,
-    RESOLVED_IGNORED_CHAPTERS,
-    EXCLUDE_UNREFERENCED,
     EXCLUDE_TAGS,
+    EXCLUDE_UNREFERENCED,
     INCLUDED_RECORDS,
+    RESOLVED_EXCLUDED_RECORDS,
+    RESOLVED_IGNORED_CHAPTERS,
+    TO_EXCLUDE,
+    TO_IGNORE,
 )
 
 
@@ -30,13 +30,11 @@ from .globals import (
 )
 def test_validate_config(exclude, exclude_unreferenced, exclude_tags):
     ex = ExcludeSearch()
-    ex.config = dict(
-        {
-            "exclude": exclude,
-            "exclude_unreferenced": exclude_unreferenced,
-            "exclude_tags": exclude_tags,
-        }
-    )
+    ex.config = {
+        "exclude": exclude,
+        "exclude_unreferenced": exclude_unreferenced,
+        "exclude_tags": exclude_tags,
+    }
     ex.validate_config(plugins=["search"])
 
 
@@ -52,13 +50,11 @@ def test_validate_config_raises_search_deactivated():
 
 def test_validate_config_raises_no_exclusion():
     ex = ExcludeSearch()
-    ex.config = dict(
-        {
-            "exclude": [],
-            "exclude_unreferenced": EXCLUDE_UNREFERENCED,
-            "exclude_tags": EXCLUDE_TAGS,
-        }
-    )
+    ex.config = {
+        "exclude": [],
+        "exclude_unreferenced": EXCLUDE_UNREFERENCED,
+        "exclude_tags": EXCLUDE_TAGS,
+    }
     with pytest.raises(ValueError) as error:
         ex.validate_config(plugins=["search"])
     assert (
@@ -70,14 +66,12 @@ def test_validate_config_raises_no_exclusion():
 
 def test_validate_config_pops_ignore_is_not_header():
     ex = ExcludeSearch()
-    ex.config = dict(
-        {
-            "exclude": TO_EXCLUDE,
-            "ignore": ["not_a_header.md", "dir/file.md#header"],
-            "exclude_unreferenced": EXCLUDE_UNREFERENCED,
-            "exclude_tags": EXCLUDE_TAGS,
-        }
-    )
+    ex.config = {
+        "exclude": TO_EXCLUDE,
+        "ignore": ["not_a_header.md", "dir/file.md#header"],
+        "exclude_unreferenced": EXCLUDE_UNREFERENCED,
+        "exclude_tags": EXCLUDE_TAGS,
+    }
     ex.validate_config(plugins=["search"])
     assert "not_a_header.md" not in ex.config["ignore"]
     assert "dir/file.md#header" in ex.config["ignore"]
@@ -87,14 +81,12 @@ def test_validate_config_pops_ignore_is_not_header():
 def test_validate_config_normalizes_string_options():
     # exclude/ignore accept a single string, which must not be iterated as characters
     ex = ExcludeSearch()
-    ex.config = dict(
-        {
-            "exclude": "chapter_exclude_all.md",
-            "ignore": "dir/file.md#header",
-            "exclude_unreferenced": EXCLUDE_UNREFERENCED,
-            "exclude_tags": EXCLUDE_TAGS,
-        }
-    )
+    ex.config = {
+        "exclude": "chapter_exclude_all.md",
+        "ignore": "dir/file.md#header",
+        "exclude_unreferenced": EXCLUDE_UNREFERENCED,
+        "exclude_tags": EXCLUDE_TAGS,
+    }
     ex.validate_config(plugins=["search"])
     assert ex.config["exclude"] == ["chapter_exclude_all.md"]
     assert ex.config["ignore"] == ["dir/file.md#header"]
@@ -102,14 +94,12 @@ def test_validate_config_normalizes_string_options():
 
 def test_validate_config_keeps_valid_ignore():
     ex = ExcludeSearch()
-    ex.config = dict(
-        {
-            "exclude": TO_EXCLUDE,
-            "ignore": TO_IGNORE,
-            "exclude_unreferenced": EXCLUDE_UNREFERENCED,
-            "exclude_tags": EXCLUDE_TAGS,
-        }
-    )
+    ex.config = {
+        "exclude": TO_EXCLUDE,
+        "ignore": TO_IGNORE,
+        "exclude_unreferenced": EXCLUDE_UNREFERENCED,
+        "exclude_tags": EXCLUDE_TAGS,
+    }
     ex.validate_config(plugins=["search"])
     assert ex.config["ignore"] == TO_IGNORE
 
@@ -439,7 +429,7 @@ def test_select_records_tags():
 def test_select_records():
     _location_ = Path(__file__).resolve().parent
     with open(
-        _location_.joinpath("mock_data/mock_search_index.json"), "r", encoding="utf-8"
+        _location_.joinpath("mock_data/mock_search_index.json"), encoding="utf-8"
     ) as f:
         mock_search_index = json.load(f)
 
@@ -458,7 +448,7 @@ def test_select_records():
 def test_select_records_unreferenced():
     _location_ = Path(__file__).resolve().parent
     with open(
-        _location_.joinpath("mock_data/mock_search_index.json"), "r", encoding="utf-8"
+        _location_.joinpath("mock_data/mock_search_index.json"), encoding="utf-8"
     ) as f:
         mock_search_index = json.load(f)
 
@@ -478,7 +468,7 @@ def test_select_records_unreferenced():
 def test_select_records_exclude_tags():
     _location_ = Path(__file__).resolve().parent
     with open(
-        _location_.joinpath("mock_data/mock_search_index.json"), "r", encoding="utf-8"
+        _location_.joinpath("mock_data/mock_search_index.json"), encoding="utf-8"
     ) as f:
         mock_search_index = json.load(f)
 
@@ -497,7 +487,7 @@ def test_select_records_exclude_tags():
 def test_on_post_build():
     _location_ = Path(__file__).resolve().parent
     with open(
-        _location_.joinpath("mock_data/mock_search_index.json"), "r", encoding="utf-8"
+        _location_.joinpath("mock_data/mock_search_index.json"), encoding="utf-8"
     ) as f:
         mock_search_index = json.load(f)
 
@@ -512,19 +502,17 @@ def test_on_post_build():
     p3 = patch.object(
         ExcludeSearch, "select_included_records", return_value=["some_included_record"]
     )
-    with p1:
-        with p2:
-            with p3 as mock_p3:
-                exs = ExcludeSearch()
-                exs.config["exclude"] = ["dir/dir_chapter_exclude_all.md"]
-                # defaults
-                (
-                    exs.config["ignore"],
-                    exs.config["exclude_unreferenced"],
-                    exs.config["exclude_tags"],
-                ) = ([], False, False)
+    with p1, p2, p3 as mock_p3:
+        exs = ExcludeSearch()
+        exs.config["exclude"] = ["dir/dir_chapter_exclude_all.md"]
+        # defaults
+        (
+            exs.config["ignore"],
+            exs.config["exclude_unreferenced"],
+            exs.config["exclude_tags"],
+        ) = ([], False, False)
 
-                out_config = exs.on_post_build(config=cfg)
+        out_config = exs.on_post_build(config=cfg)
 
     assert isinstance(out_config, Config)
     assert mock_p3.call_count == 1
@@ -533,7 +521,7 @@ def test_on_post_build():
 def test_on_post_build_no_nav():
     _location_ = Path(__file__).resolve().parent
     with open(
-        _location_.joinpath("mock_data/mock_search_index.json"), "r", encoding="utf-8"
+        _location_.joinpath("mock_data/mock_search_index.json"), encoding="utf-8"
     ) as f:
         mock_search_index = json.load(f)
 
@@ -549,19 +537,17 @@ def test_on_post_build_no_nav():
     p3 = patch.object(
         ExcludeSearch, "select_included_records", return_value=["some_included_record"]
     )
-    with p1:
-        with p2:
-            with p3 as mock_p3:
-                exs = ExcludeSearch()
-                exs.config["exclude"] = ["dir/dir_chapter_exclude_all.md"]
-                # defaults
-                (
-                    exs.config["ignore"],
-                    exs.config["exclude_unreferenced"],
-                    exs.config["exclude_tags"],
-                ) = ([], False, False)
+    with p1, p2, p3 as mock_p3:
+        exs = ExcludeSearch()
+        exs.config["exclude"] = ["dir/dir_chapter_exclude_all.md"]
+        # defaults
+        (
+            exs.config["ignore"],
+            exs.config["exclude_unreferenced"],
+            exs.config["exclude_tags"],
+        ) = ([], False, False)
 
-                out_config = exs.on_post_build(config=cfg)
+        out_config = exs.on_post_build(config=cfg)
 
     assert isinstance(out_config, Config)
     assert mock_p3.call_count == 1

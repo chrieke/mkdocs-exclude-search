@@ -1,11 +1,13 @@
-install:
-	pip install -e .
-	pip install -r requirements_dev.txt
+install:  # Requires pip >= 25.1 for --group.
+	pip install -e . --group dev --group docs
 
-test:
-	rm -r .pytest_cache || true
-	black .
-	python -m pytest --pylint --pylint-rcfile=./pylintrc --mypy --mypy-ignore-missing-imports --cov=mkdocs_exclude_search/ --durations=3 --ignore=./test-repos/
+lint:
+	ruff format .
+	ruff check --fix .
+	mypy
+
+test: lint
+	python -m pytest
 	coverage-badge -f -o coverage.svg
 
 serve:  # Serve the docs/ example site with the plugin (requires `make install`).
