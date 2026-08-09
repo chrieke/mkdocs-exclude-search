@@ -1,8 +1,8 @@
 import json
-from pathlib import Path
 import logging
-from typing import List, Dict, Tuple, Union, Any
 from fnmatch import fnmatch
+from pathlib import Path
+from typing import Any, Union
 
 import mkdocs
 from mkdocs.config import config_options
@@ -45,7 +45,7 @@ class ExcludeSearch(BasePlugin):
         ("exclude_tags", config_options.Type(bool, default=False)),
     )
 
-    def validate_config(self, plugins: List[str]):
+    def validate_config(self, plugins: list[str]):
         """
         Validate and normalize the mkdocs-exclude-search plugin configuration.
         """
@@ -87,8 +87,8 @@ class ExcludeSearch(BasePlugin):
 
     @staticmethod
     def resolve_excluded_records(
-        to_exclude: List[str],
-    ) -> List:
+        to_exclude: list[str],
+    ) -> list:
         """
         Resolve the search index file-name and header-names from the user provided excluded entries.
 
@@ -103,7 +103,7 @@ class ExcludeSearch(BasePlugin):
         return [split_header(entry) for entry in to_exclude]
 
     @staticmethod
-    def resolve_ignored_chapters(to_ignore: List[str]) -> List:
+    def resolve_ignored_chapters(to_ignore: list[str]) -> list:
         """
         Supplement the search index main entry for each user provided ignored header.
 
@@ -128,7 +128,7 @@ class ExcludeSearch(BasePlugin):
         return ignored_chapters
 
     @staticmethod
-    def is_unreferenced_record(rec_file_name: str, navigation_items: List[str]) -> bool:
+    def is_unreferenced_record(rec_file_name: str, navigation_items: list[str]) -> bool:
         """
         Unreferenced markdown files that are not contained in mkdocs.yml navigation
         nav section. navigation_items are suffix-free, as returned by explode_navigation.
@@ -155,7 +155,7 @@ class ExcludeSearch(BasePlugin):
 
     @staticmethod
     def is_ignored_record(
-        rec_file_name: str, rec_header_name: Union[str, None], to_ignore: List[Tuple]
+        rec_file_name: str, rec_header_name: Union[str, None], to_ignore: list[tuple]
     ) -> bool:
         """
         Headers selected by the user as to be ignored from the exclusions.
@@ -178,7 +178,7 @@ class ExcludeSearch(BasePlugin):
 
     @staticmethod
     def is_excluded_record(
-        rec_file_name: str, rec_header_name: Union[str, None], to_exclude: List[Tuple]
+        rec_file_name: str, rec_header_name: Union[str, None], to_exclude: list[tuple]
     ) -> bool:
         """
         Files, headers or directories selected by the user to be excluded.
@@ -201,13 +201,13 @@ class ExcludeSearch(BasePlugin):
 
     def select_included_records(
         self,
-        search_index: Dict,
-        to_exclude: List[Tuple[Any, ...]],
-        to_ignore: List[Tuple[Any, ...]],
-        navigation_items: List[str],
+        search_index: dict,
+        to_exclude: list[tuple[Any, ...]],
+        to_ignore: list[tuple[Any, ...]],
+        navigation_items: list[str],
         exclude_unreferenced: bool = False,
         exclude_tags: bool = False,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         """
         Select the search index records to be included in the final selection.
 
@@ -264,7 +264,7 @@ class ExcludeSearch(BasePlugin):
             return config
 
         search_index_fp = Path(config.data["site_dir"]) / "search/search_index.json"
-        with open(search_index_fp, "r", encoding="utf-8") as f:
+        with open(search_index_fp, encoding="utf-8") as f:
             search_index = json.load(f)
 
         to_exclude = self.config["exclude"]

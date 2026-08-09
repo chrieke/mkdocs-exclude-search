@@ -33,5 +33,39 @@ Homepage = "https://github.com/chrieke/mkdocs-exclude-search"
 [project.entry-points."mkdocs.plugins"]
 exclude-search = "mkdocs_exclude_search:ExcludeSearch"
 
+[dependency-groups]
+dev = [
+    "ruff",
+    "mypy",
+    "pytest",
+    "pytest-cov",
+    "pytest-sugar",
+    "coverage-badge",
+    "twine",
+]
+docs = [
+    "mkdocs-material",
+    # Provides the `tags` plugin used by the docs/ example site (distribution
+    # name differs from the repo name).
+    "tags-macros-plugin @ git+https://github.com/jldiaz/mkdocs-plugin-tags.git",
+]
+
 [tool.setuptools.packages.find]
 exclude = ["tests*", "docs*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--cov=mkdocs_exclude_search/ --durations=3"
+
+[tool.ruff.lint]
+extend-select = ["I", "B", "UP"]
+# PEP 585 builtin generics work on all supported versions, so no __future__ import needed.
+ignore = ["FA100"]
+
+[tool.ruff.lint.per-file-ignores]
+# Re-exports for the test suite, imported after a sys.path insert.
+"tests/context.py" = ["E402", "F401"]
+
+[tool.mypy]
+files = ["mkdocs_exclude_search"]
+ignore_missing_imports = true
