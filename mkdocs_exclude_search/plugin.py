@@ -9,7 +9,12 @@ from mkdocs.config import config_options
 from mkdocs.plugins import BasePlugin
 from packaging.version import Version
 
-from mkdocs_exclude_search.utils import explode_navigation
+from mkdocs_exclude_search.utils import (
+    explode_navigation,
+    split_header,
+    strip_md_suffix,
+    strip_url_suffix,
+)
 
 
 def get_logger():
@@ -40,14 +45,15 @@ class ExcludeSearch(BasePlugin):
         ("exclude_tags", config_options.Type(bool, default=False)),
     )
 
-    def __init__(self):
-        self.enabled = True
-        self.total_time = 0
-
     def validate_config(self, plugins: List[str]):
         """
-        Validate mkdocs-exclude-search plugin configuration.
+        Validate and normalize the mkdocs-exclude-search plugin configuration.
         """
+        # `exclude` and `ignore` may be a single string, everything below expects a list.
+        for option in ("exclude", "ignore"):
+            if isinstance(self.config.get(option), str):
+                self.config[option] = [self.config[option]]
+
         if not ("search" in plugins or "material/search" in plugins):
             message = (
                 "mkdocs-exclude-search plugin is activated but has no effect as "
@@ -68,19 +74,16 @@ class ExcludeSearch(BasePlugin):
             logger.info(message)
             raise ValueError(message)
 
-        try:
-            if self.config["ignore"]:
-                invalid_ignored = [x for x in self.config["ignore"] if "#" not in x]
-                message = (
-                    f"mkdocs-exclude-search configuration for `ignore` can only be "
-                    f"headers (containing `#`), the following entries will be ignored: {invalid_ignored}"
-                )
-                logger.info(message)
-                self.config["ignore"] = [
-                    x for x in self.config["ignore"] if not x in invalid_ignored
-                ]
-        except KeyError:
-            pass
+        invalid_ignored = [x for x in self.config.get("ignore", []) if "#" not in x]
+        if invalid_ignored:
+            message = (
+                f"mkdocs-exclude-search configuration for `ignore` can only be "
+                f"headers (containing `#`), the following entries will be ignored: {invalid_ignored}"
+            )
+            logger.info(message)
+            self.config["ignore"] = [
+                x for x in self.config["ignore"] if x not in invalid_ignored
+            ]
 
     @staticmethod
     def resolve_excluded_records(
@@ -96,15 +99,8 @@ class ExcludeSearch(BasePlugin):
         Returns:
             A list with each resolved entry as a tuple of (file-name, header-name/None).
         """
-        excluded_entries = []
         # TODO: This currently could exclude files with an excluded folder of the same name.
-        for entry in to_exclude:
-            try:
-                file_name, header_name = entry.split("#")
-            except ValueError:
-                file_name, header_name = entry, None  # type: ignore
-            excluded_entries.append((file_name, header_name))
-        return excluded_entries
+        return [split_header(entry) for entry in to_exclude]
 
     @staticmethod
     def resolve_ignored_chapters(to_ignore: List[str]) -> List:
@@ -124,7 +120,7 @@ class ExcludeSearch(BasePlugin):
         file_name_entries = []
         file_header_names_entries = []
         for entry in to_ignore:
-            file_name, header_name = entry.split("#")
+            file_name, header_name = split_header(entry)
             file_name_entries.append((file_name, None))
             file_header_names_entries.append((file_name, header_name))
 
@@ -132,31 +128,35 @@ class ExcludeSearch(BasePlugin):
         return ignored_chapters
 
     @staticmethod
-    def is_unreferenced_record(rec_file_name: str, navigation_items: List[str]):
+    def is_unreferenced_record(rec_file_name: str, navigation_items: List[str]) -> bool:
         """
         Unreferenced markdown files that are not contained in mkdocs.yml navigation
-        nav section.
+        nav section. navigation_items are suffix-free, as returned by explode_navigation.
         """
-        return rec_file_name not in navigation_items
+        return strip_url_suffix(rec_file_name) not in navigation_items
 
     @staticmethod
-    def is_tag_record(rec_file_name: str):
-        """Tags entries of mkdocs-plugin-tags"""
-        # TODO: Surface in readme
-        return "tags.html" in rec_file_name
+    def is_tag_record(rec_file_name: str) -> bool:
+        """Tags entries of mkdocs-plugin-tags.
+
+        The tags page is located at 'tags/' with the default `use_directory_urls`,
+        'tags.html' without.
+        """
+        stripped = strip_url_suffix(rec_file_name)
+        return stripped == "tags" or stripped.endswith("/tags")
 
     @staticmethod
-    def is_root_record(rec_file_name: str):
-        """Required mkdocs root files.
+    def is_root_record(rec_file_name: str) -> bool:
+        """Required mkdocs root file, i.e. the site index page.
 
-        Collides with is_tag_record as these have no slash. Handled by order in select_included_records.
+        Its location is "" with the default `use_directory_urls`, "index.html" without.
         """
-        return "/" not in rec_file_name
+        return rec_file_name in ("", "index.html")
 
     @staticmethod
     def is_ignored_record(
         rec_file_name: str, rec_header_name: Union[str, None], to_ignore: List[Tuple]
-    ):
+    ) -> bool:
         """
         Headers selected by the user as to be ignored from the exclusions.
 
@@ -168,21 +168,18 @@ class ExcludeSearch(BasePlugin):
                 of (rec_file_name, rec_header_name), e.g. ('chapter_exclude_all.md', None)
 
         Returns:
-            True if the record matches with the to_ignore list, None if not.
+            True if the record matches with the to_ignore list, False if not.
         """
-        if any(
-            (
-                fnmatch(rec_file_name[:-1], f"{file_name.replace('.md', '')}")
-                and header_name == rec_header_name
-                for (file_name, header_name) in to_ignore
-            )
-        ):
-            return True
+        return any(
+            fnmatch(strip_url_suffix(rec_file_name), strip_md_suffix(file_name))
+            and header_name == rec_header_name
+            for (file_name, header_name) in to_ignore
+        )
 
     @staticmethod
     def is_excluded_record(
         rec_file_name: str, rec_header_name: Union[str, None], to_exclude: List[Tuple]
-    ):
+    ) -> bool:
         """
         Files, headers or directories selected by the user to be excluded.
 
@@ -194,16 +191,13 @@ class ExcludeSearch(BasePlugin):
                 e.g. ('chapter_exclude_all.md', None)
 
         Returns:
-            True if the record matches with the to_exclude list, None if not.
+            True if the record matches with the to_exclude list, False if not.
         """
-        if any(
-            (
-                fnmatch(rec_file_name[:-1], f"{file_name.replace('.md', '')}")
-                and (rec_header_name == header_name or not header_name)
-                for (file_name, header_name) in to_exclude
-            )
-        ):
-            return True
+        return any(
+            fnmatch(strip_url_suffix(rec_file_name), strip_md_suffix(file_name))
+            and (rec_header_name == header_name or not header_name)
+            for (file_name, header_name) in to_exclude
+        )
 
     def select_included_records(
         self,
@@ -221,8 +215,8 @@ class ExcludeSearch(BasePlugin):
             search_index: The mkdocs search index in "config.data["site_dir"]) / "search/search_index.json"
             to_exclude: Resolved list of excluded search index records.
             to_ignore: Resolved list of ignored search index chapter records.
-            navigation_items: List of markdown filepaths in the mkdocs.yml nav, in the format
-                ["filename/", dir/filename/]
+            navigation_items: List of markdown filepaths in the mkdocs.yml nav, without the
+                markdown suffix, in the format ["filename", "dir/filename"]
             exclude_unreferenced: Boolean wether unreferenced files (not listed in mkdocs nav)
                 should be excluded, default False.
             exclude_tags: Boolean wether mkdocs-plugin-tags entries should be excluded, default False.
@@ -232,18 +226,16 @@ class ExcludeSearch(BasePlugin):
         """
         included_records = []
         for record in search_index["docs"]:
-            try:
-                rec_file_name, rec_header_name = record["location"].split("#")
-            except ValueError:
-                rec_file_name, rec_header_name = record["location"], None
+            rec_file_name, rec_header_name = split_header(record["location"])
 
-            # pylint: disable=no-else-continue
-            if exclude_tags and self.is_tag_record(rec_file_name):
-                logger.debug(f"exclude-search (excludedTags): {record['location']}")
-                continue
+            if self.is_tag_record(rec_file_name):
+                # Tag pages have no markdown file, the unreferenced rule must not apply.
+                if exclude_tags:
+                    logger.debug(f"exclude-search (excludedTags): {record['location']}")
+                    continue
             elif self.is_root_record(rec_file_name):
-                # logger.debug(f"include-search (requiredRoot): {record['location']}")
                 included_records.append(record)
+                continue
             elif exclude_unreferenced and self.is_unreferenced_record(
                 rec_file_name=rec_file_name, navigation_items=navigation_items
             ):
@@ -251,14 +243,14 @@ class ExcludeSearch(BasePlugin):
                     f"exclude-search (excludedUnreferenced): {record['location']}"
                 )
                 continue
-            elif self.is_ignored_record(rec_file_name, rec_header_name, to_ignore):
+
+            if self.is_ignored_record(rec_file_name, rec_header_name, to_ignore):
                 logger.debug(f"include-search (ignoredRule): {record['location']}")
                 included_records.append(record)
             elif self.is_excluded_record(rec_file_name, rec_header_name, to_exclude):
                 logger.debug(f"exclude-search (excludedRule): {record['location']}")
                 continue
             else:
-                # logger.debug(f"include-search (noRule): {record['location']}")
                 included_records.append(record)
 
         return included_records
@@ -272,7 +264,7 @@ class ExcludeSearch(BasePlugin):
             return config
 
         search_index_fp = Path(config.data["site_dir"]) / "search/search_index.json"
-        with open(search_index_fp, "r") as f:
+        with open(search_index_fp, "r", encoding="utf-8") as f:
             search_index = json.load(f)
 
         to_exclude = self.config["exclude"]
@@ -303,7 +295,7 @@ class ExcludeSearch(BasePlugin):
         )
 
         search_index["docs"] = included_records
-        with open(search_index_fp, "w") as f:
+        with open(search_index_fp, "w", encoding="utf-8") as f:
             json.dump(search_index, f)
 
         return config
